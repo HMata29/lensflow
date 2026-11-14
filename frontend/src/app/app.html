@@ -1,0 +1,270 @@
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">◉</div>
+      <div class="brand-text">
+        <h1>LensFlow</h1>
+        <span>PHOTOGRAPHY MANAGEMENT</span>
+      </div>
+    </div>
+
+    <nav class="navigation">
+      @for (item of navigation; track item.label) {
+        <button
+          class="nav-item"
+          [class.active]="activePage === item.label"
+          (click)="selectPage(item.label)"
+        >
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button
+        class="nav-item settings-item"
+        [class.active]="activePage === 'Impostazioni'"
+        (click)="selectPage('Impostazioni')"
+      >
+        <span class="nav-icon">⚙</span>
+        <span>Impostazioni</span>
+      </button>
+
+      <div class="pro-card">
+        <div class="pro-image"></div>
+        <div class="pro-content">
+          <span class="pro-label">LENSFLOW PRO</span>
+          <p>Porta il tuo studio al livello successivo.</p>
+          <button class="pro-button">✦ Scopri Pro</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">IL TUO STUDIO FOTOGRAFICO</div>
+        <h2>
+          @if (activePage === 'Dashboard') {
+            Ciao, Marco <span class="wave">✦</span>
+          } @else {
+            {{ activePage }}
+          }
+        </h2>
+        <p class="subtitle">
+          @if (activePage === 'Dashboard') {
+            Ecco la panoramica della tua attività fotografica.
+          } @else {
+            Gestisci {{ activePage.toLowerCase() }} del tuo studio.
+          }
+        </p>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="icon-button" aria-label="Cerca">⌕</button>
+        <button class="icon-button notification" aria-label="Notifiche">
+          ♧
+          <span class="notification-dot"></span>
+        </button>
+
+        <div class="profile">
+          <div class="avatar">M</div>
+          <div class="profile-info">
+            <strong>Marco Bianchi</strong>
+            <span>Fotografo freelance</span>
+          </div>
+          <span class="profile-chevron">⌄</span>
+        </div>
+      </div>
+    </header>
+
+    @if (activePage === 'Dashboard') {
+      <section class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <article class="stat-card">
+            <div class="stat-icon" [class]="stat.color">
+              {{ stat.icon }}
+            </div>
+            <div class="stat-content">
+              <span class="stat-label">{{ stat.label }}</span>
+              <strong class="stat-value">{{ stat.value }}</strong>
+              <span class="stat-detail" [class]="stat.color">
+                {{ stat.detail }}
+              </span>
+            </div>
+          </article>
+        }
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel upcoming-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span class="section-icon">▦</span>
+              <h3>Prossimi shooting</h3>
+            </div>
+            <button class="text-button" (click)="selectPage('Shooting')">
+              Vedi tutti <span>→</span>
+            </button>
+          </div>
+
+          <div class="shoot-list">
+            @for (shoot of upcomingShoots; track shoot.title) {
+              <div class="shoot-item">
+                <div class="date-box">
+                  <span>{{ shoot.weekday }}</span>
+                  <strong>{{ shoot.day }}</strong>
+                  <span>{{ shoot.month }}</span>
+                </div>
+
+                <div class="shoot-thumbnail" [class]="shoot.image">
+                  @if (shoot.image === 'wedding') {
+                    <span>♡</span>
+                  } @else if (shoot.image === 'portrait') {
+                    <span>◉</span>
+                  } @else {
+                    <span>♫</span>
+                  }
+                </div>
+
+                <div class="shoot-info">
+                  <strong>{{ shoot.title }}</strong>
+                  <span class="shoot-location">⌖ {{ shoot.location }}</span>
+                  <span class="shoot-time">◷ {{ shoot.time }}</span>
+                </div>
+
+                <span class="status" [class]="shoot.statusClass">
+                  {{ shoot.status }}
+                </span>
+              </div>
+            }
+          </div>
+        </article>
+
+        <article class="panel calendar-panel">
+          <div class="panel-header">
+            <button class="calendar-arrow" aria-label="Mese precedente">‹</button>
+            <h3>Gennaio 2026</h3>
+            <button class="calendar-arrow" aria-label="Mese successivo">›</button>
+          </div>
+
+          <div class="calendar-grid">
+            @for (day of ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom']; track day) {
+              <span class="calendar-weekday">{{ day }}</span>
+            }
+
+            @for (day of [29, 30, 31]; track day) {
+              <span class="calendar-day muted">{{ day }}</span>
+            }
+
+            @for (day of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]; track day) {
+              <span class="calendar-day" [class.selected]="day === 24" [class.has-event]="day === 17 || day === 29">
+                {{ day }}
+              </span>
+            }
+          </div>
+        </article>
+
+        <article class="panel revenue-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span class="section-icon">↗</span>
+              <h3>Fatturato mensile</h3>
+            </div>
+            <span class="period-label">Ultimi 6 mesi</span>
+          </div>
+
+          <div class="revenue-summary">
+            <strong>€ 6.420</strong>
+            <span><b>↗ +18%</b> rispetto al mese scorso</span>
+          </div>
+
+          <div class="chart">
+            <div class="chart-grid-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <svg viewBox="0 0 600 190" preserveAspectRatio="none" class="chart-svg">
+              <defs>
+                <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#d9b477" stop-opacity="0.32" />
+                  <stop offset="100%" stop-color="#d9b477" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+
+              <path
+                d="M 20 155 C 80 130, 90 120, 150 112 S 220 75, 280 100 S 350 130, 410 90 S 500 85, 580 35 L 580 180 L 20 180 Z"
+                fill="url(#revenueGradient)"
+              />
+
+              <path
+                d="M 20 155 C 80 130, 90 120, 150 112 S 220 75, 280 100 S 350 130, 410 90 S 500 85, 580 35"
+                fill="none"
+                stroke="#d9b477"
+                stroke-width="3"
+                stroke-linecap="round"
+              />
+
+              <circle cx="580" cy="35" r="6" fill="#f4d5a1" stroke="#fff" stroke-width="2" />
+            </svg>
+
+            <div class="chart-labels">
+              <span>Ago</span>
+              <span>Set</span>
+              <span>Ott</span>
+              <span>Nov</span>
+              <span>Dic</span>
+              <span>Gen</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel activity-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span class="section-icon">◈</span>
+              <h3>Attività recenti</h3>
+            </div>
+            <button class="text-button">Vedi tutto <span>→</span></button>
+          </div>
+
+          <div class="activity-list">
+            @for (activity of activities; track activity.title) {
+              <div class="activity-item">
+                <div class="activity-icon" [class]="activity.color">
+                  {{ activity.icon }}
+                </div>
+
+                <div class="activity-info">
+                  <strong>{{ activity.title }}</strong>
+                  <span>{{ activity.description }}</span>
+                </div>
+
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+    } @else {
+      <section class="panel placeholder-panel">
+        <div class="placeholder-icon">◈</div>
+        <h3>{{ activePage }}</h3>
+        <p>Questa sezione sarà implementata nel prossimo step.</p>
+        <button class="primary-button" (click)="selectPage('Dashboard')">
+          Torna alla dashboard
+        </button>
+      </section>
+    }
+
+    <footer class="footer">
+      <span>© 2026 LensFlow</span>
+      <span>Made for photographers <span class="footer-star">✦</span></span>
+    </footer>
+  </main>
+</div>
