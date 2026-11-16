@@ -134,7 +134,11 @@ public class Quote {
     }
 
     public void setItems(List<QuoteItem> items) {
-        this.items = items;
+    this.items.clear();
+
+    if (items != null) {
+        this.items.addAll(items);
+    }
     }
 
     public BigDecimal getTotalAmount() {
