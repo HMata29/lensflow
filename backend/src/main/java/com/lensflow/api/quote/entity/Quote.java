@@ -17,7 +17,7 @@ public class Quote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 40)
     private String quoteNumber;
 
     @Column(nullable = false, length = 150)
@@ -53,6 +53,13 @@ public class Quote {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private com.lensflow.api.auth.entity.User owner;
+
+    public com.lensflow.api.auth.entity.User getOwner() { return owner; }
+    public void setOwner(com.lensflow.api.auth.entity.User owner) { this.owner = owner; }
 
     public Quote() {
     }

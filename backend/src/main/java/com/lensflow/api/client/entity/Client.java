@@ -35,6 +35,13 @@ public class Client {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private com.lensflow.api.auth.entity.User owner;
+
+    public com.lensflow.api.auth.entity.User getOwner() { return owner; }
+    public void setOwner(com.lensflow.api.auth.entity.User owner) { this.owner = owner; }
+
     public Client() {
     }
 
