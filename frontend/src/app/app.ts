@@ -11,6 +11,18 @@ import { GalleriesComponent } from './galleries/galleries.component';
 import { ClientService } from './services/client.service';
 import { Client, ClientRequest } from './models/client.model';
 
+interface PhotographerSettings {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  studioName: string;
+  address: string;
+  vatNumber: string;
+  currency: string;
+  dateFormat: string;
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -27,7 +39,76 @@ import { Client, ClientRequest } from './models/client.model';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
+
+
 export class App {
+
+  // IMPOSTAZIONI PROFILO
+
+private readonly settingsStorageKey = 'lensflow-settings';
+
+settings: PhotographerSettings = this.loadSettings();
+
+settingsSaved = false;
+
+private defaultSettings(): PhotographerSettings {
+  return {
+    firstName: 'Marco',
+    lastName: 'Bianchi',
+    email: '',
+    phone: '',
+    studioName: '',
+    address: '',
+    vatNumber: '',
+    currency: 'EUR',
+    dateFormat: 'dd/MM/yyyy',
+  };
+}
+
+private loadSettings(): PhotographerSettings {
+  const defaults = this.defaultSettings();
+
+  try {
+    if (typeof window === 'undefined') {
+      return defaults;
+    }
+
+    const saved = localStorage.getItem(this.settingsStorageKey);
+
+    return saved
+      ? { ...defaults, ...JSON.parse(saved) }
+      : defaults;
+  } catch {
+    return defaults;
+  }
+}
+
+saveSettings(): void {
+  try {
+    localStorage.setItem(
+      this.settingsStorageKey,
+      JSON.stringify(this.settings),
+    );
+
+    this.settingsSaved = true;
+  } catch {
+    this.settingsSaved = false;
+  }
+}
+
+get photographerName(): string {
+  const name = `${this.settings.firstName} ${this.settings.lastName}`.trim();
+
+  return name || 'Fotografo';
+}
+
+get photographerInitial(): string {
+  return this.settings.firstName.trim().charAt(0).toUpperCase() || 'F';
+}
+
+get studioRole(): string {
+  return this.settings.studioName.trim() || 'Fotografo freelance';
+}
 
 
   private readonly clientService = inject(ClientService);
@@ -207,7 +288,6 @@ export class App {
     { label: 'Preventivi', icon: '▤' },
     { label: 'Pagamenti', icon: '€' },
     { label: 'Gallerie', icon: '▧' },
-    { label: 'Statistiche', icon: '▥' },
   ];
 
   readonly stats = [

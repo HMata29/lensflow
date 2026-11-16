@@ -31,15 +31,6 @@
         <span class="nav-icon">⚙</span>
         <span>Impostazioni</span>
       </button>
-
-      <div class="pro-card">
-        <div class="pro-image"></div>
-        <div class="pro-content">
-          <span class="pro-label">LENSFLOW PRO</span>
-          <p>Porta il tuo studio al livello successivo.</p>
-          <button class="pro-button">✦ Scopri Pro</button>
-        </div>
-      </div>
     </div>
   </aside>
 
@@ -49,7 +40,8 @@
         <div class="eyebrow">IL TUO STUDIO FOTOGRAFICO</div>
         <h2>
           @if (activePage === 'Dashboard') {
-            Ciao, Marco <span class="wave">✦</span>
+            Ciao, {{ settings.firstName || 'Fotografo' }}
+            <span class="wave">✦</span>
           } @else {
             {{ activePage }}
           }
@@ -71,13 +63,17 @@
         </button>
 
         <div class="profile">
-          <div class="avatar">M</div>
-          <div class="profile-info">
-            <strong>Marco Bianchi</strong>
-            <span>Fotografo freelance</span>
-          </div>
-          <span class="profile-chevron">⌄</span>
+        <div class="avatar">
+          {{ photographerInitial }}
         </div>
+
+        <div class="profile-info">
+          <strong>{{ photographerName }}</strong>
+          <span>{{ studioRole }}</span>
+        </div>
+
+        <span class="profile-chevron">⌄</span>
+      </div>
       </div>
     </header>
 
@@ -306,7 +302,173 @@
       <app-payments></app-payments>
     } @else if (activePage === 'Gallerie') {
       <app-galleries></app-galleries>
-    } @else {
+    
+} @else if (activePage === 'Impostazioni') {
+  <section class="settings-page">
+
+    <div class="settings-intro">
+      <h3>Impostazioni del profilo</h3>
+      <p>Personalizza le informazioni del tuo account e del tuo studio fotografico.</p>
+    </div>
+
+    @if (settingsSaved) {
+      <div class="settings-success">
+        ✓ Impostazioni salvate correttamente.
+      </div>
+    }
+
+    <form class="settings-form" (ngSubmit)="saveSettings()">
+
+      <!-- PROFILO -->
+      <article class="panel settings-panel">
+        <div class="settings-section-header">
+          <div class="settings-section-icon">♙</div>
+          <div>
+            <h3>Profilo fotografo</h3>
+            <p>Le informazioni personali del tuo account.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label>
+            Nome
+            <input
+              type="text"
+              name="firstName"
+              [(ngModel)]="settings.firstName"
+              required
+              maxlength="100"
+            />
+          </label>
+
+          <label>
+            Cognome
+            <input
+              type="text"
+              name="lastName"
+              [(ngModel)]="settings.lastName"
+              required
+              maxlength="100"
+            />
+          </label>
+
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              [(ngModel)]="settings.email"
+              maxlength="150"
+            />
+          </label>
+
+          <label>
+            Telefono
+            <input
+              type="tel"
+              name="phone"
+              [(ngModel)]="settings.phone"
+              maxlength="30"
+            />
+          </label>
+        </div>
+      </article>
+
+      <!-- STUDIO -->
+      <article class="panel settings-panel">
+        <div class="settings-section-header">
+          <div class="settings-section-icon">📷</div>
+          <div>
+            <h3>Studio fotografico</h3>
+            <p>Le informazioni professionali della tua attività.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label class="full-width">
+            Nome dello studio
+            <input
+              type="text"
+              name="studioName"
+              [(ngModel)]="settings.studioName"
+              maxlength="150"
+              placeholder="Es. Marco Bianchi Photography"
+            />
+          </label>
+
+          <label class="full-width">
+            Indirizzo
+            <input
+              type="text"
+              name="address"
+              [(ngModel)]="settings.address"
+              maxlength="255"
+              placeholder="Via, città, CAP"
+            />
+          </label>
+
+          <label>
+            Partita IVA
+            <input
+              type="text"
+              name="vatNumber"
+              [(ngModel)]="settings.vatNumber"
+              maxlength="30"
+            />
+          </label>
+        </div>
+      </article>
+
+      <!-- PREFERENZE -->
+      <article class="panel settings-panel">
+        <div class="settings-section-header">
+          <div class="settings-section-icon">⚙</div>
+          <div>
+            <h3>Preferenze</h3>
+            <p>Personalizza la visualizzazione dei dati.</p>
+          </div>
+        </div>
+
+        <div class="settings-fields">
+          <label>
+            Valuta
+            <select
+              name="currency"
+              [(ngModel)]="settings.currency"
+            >
+              <option value="EUR">Euro (€)</option>
+              <option value="USD">Dollaro ($)</option>
+              <option value="GBP">Sterlina (£)</option>
+            </select>
+          </label>
+
+          <label>
+            Formato data
+            <select
+              name="dateFormat"
+              [(ngModel)]="settings.dateFormat"
+            >
+              <option value="dd/MM/yyyy">GG/MM/AAAA</option>
+              <option value="MM/dd/yyyy">MM/GG/AAAA</option>
+              <option value="yyyy-MM-dd">AAAA-MM-GG</option>
+            </select>
+          </label>
+        </div>
+      </article>
+
+      <div class="settings-actions">
+        <button
+          class="primary-button"
+          type="submit"
+        >
+          Salva impostazioni
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+    }  @else {
       <section class="panel placeholder-panel">
         <div class="placeholder-icon">◈</div>
         <h3>{{ activePage }}</h3>

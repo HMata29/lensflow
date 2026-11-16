@@ -1140,3 +1140,128 @@ button {
   }
 }
 
+
+/* ===== IMPOSTAZIONI ===== */
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-intro {
+  h3 {
+    margin: 0 0 7px;
+    color: #f1eee8;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 0;
+    color: #92918e;
+    font-size: 12px;
+  }
+}
+
+.settings-panel {
+  padding: 24px;
+}
+
+.settings-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 5px;
+    color: #f1eee8;
+    font-size: 14px;
+  }
+
+  p {
+    margin: 0;
+    color: #92918e;
+    font-size: 11px;
+  }
+}
+
+.settings-section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #35291b;
+  color: #d9b477;
+  font-size: 19px;
+}
+
+.settings-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #c9c5bd;
+    font-size: 12px;
+  }
+
+  input,
+  select {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 13px;
+    border: 1px solid #333436;
+    border-radius: 8px;
+    outline: none;
+    background: #111214;
+    color: #f1eee8;
+    font: inherit;
+    font-size: 12px;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #d9b477;
+    }
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.settings-success {
+  padding: 12px 15px;
+  border: 1px solid #28533d;
+  border-radius: 8px;
+  background: #1c3027;
+  color: #75d6a4;
+  font-size: 12px;
+}
+
+@media (max-width: 650px) {
+  .settings-fields {
+    grid-template-columns: 1fr;
+
+    .full-width {
+      grid-column: auto;
+    }
+  }
+
+  .settings-panel {
+    padding: 18px;
+  }
+}
+
+
