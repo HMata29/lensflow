@@ -11,14 +11,22 @@ import { forkJoin, finalize } from 'rxjs';
 import { ClientService } from '../services/client.service';
 import { ShootingService } from '../services/shooting.service';
 import { QuoteService } from '../services/quote.service';
+import { PaymentService } from '../services/payment.service';
 
 import { Client } from '../models/client.model';
 import { Shooting } from '../models/shooting.model';
 import { Quote } from '../models/quote.model';
+import { Payment } from '../models/payment.model';
 
 interface MonthlyShooting {
   label: string;
   count: number;
+  percentage: number;
+}
+
+interface MonthlyIncome {
+  label: string;
+  amount: number;
   percentage: number;
 }
 
@@ -33,11 +41,13 @@ export class DashboardComponent implements OnInit {
   private readonly clientService = inject(ClientService);
   private readonly shootingService = inject(ShootingService);
   private readonly quoteService = inject(QuoteService);
+  private readonly paymentService = inject(PaymentService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   clients: Client[] = [];
   shootings: Shooting[] = [];
   quotes: Quote[] = [];
+  payments: Payment[] = [];
 
   loading = true;
   errorMessage = '';
@@ -56,6 +66,7 @@ export class DashboardComponent implements OnInit {
       clients: this.clientService.getAll(),
       shootings: this.shootingService.getAll(),
       quotes: this.quoteService.getAll(),
+      payments: this.paymentService.getAll(),
     })
       .pipe(
         finalize(() => {
@@ -64,10 +75,11 @@ export class DashboardComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: ({ clients, shootings, quotes }) => {
+        next: ({ clients, shootings, quotes, payments }) => {
           this.clients = clients;
           this.shootings = shootings;
           this.quotes = quotes;
+          this.payments = payments;
 
           this.cdr.detectChanges();
         },
@@ -81,6 +93,8 @@ export class DashboardComponent implements OnInit {
         },
       });
   }
+
+  // STATISTICHE GENERALI
 
   get totalClients(): number {
     return this.clients.length;
@@ -142,6 +156,120 @@ export class DashboardComponent implements OnInit {
       .reduce((total, quote) => total + quote.totalAmount, 0);
   }
 
+  // STATISTICHE FINANZIARIE
+
+  get totalReceived(): number {
+    return this.payments
+      .filter((payment) => payment.status === 'RECEIVED')
+      .reduce((total, payment) => total + payment.amount, 0);
+  }
+
+  get totalPending(): number {
+    return this.payments
+      .filter((payment) => payment.status === 'PENDING')
+      .reduce((total, payment) => total + payment.amount, 0);
+  }
+
+  get totalRefunded(): number {
+    return this.payments
+      .filter((payment) => payment.status === 'REFUNDED')
+      .reduce((total, payment) => total + payment.amount, 0);
+  }
+
+  get totalOutstanding(): number {
+    const acceptedQuoteIds = new Set(
+      this.quotes
+        .filter((quote) => quote.status === 'ACCEPTED')
+        .map((quote) => quote.id),
+    );
+
+    const eligibleShootings = this.shootings.filter(
+      (shooting) =>
+        shooting.quoteId != null &&
+        acceptedQuoteIds.has(shooting.quoteId),
+    );
+
+    const eligibleShootingIds = new Set(
+      eligibleShootings.map((shooting) => shooting.id),
+    );
+
+    const acceptedShootingTotals = eligibleShootings.reduce(
+      (total, shooting) =>
+        total + (shooting.quoteTotalAmount ?? 0),
+      0,
+    );
+
+    const receivedForEligibleShootings = this.payments
+      .filter(
+        (payment) =>
+          payment.status === 'RECEIVED' &&
+          eligibleShootingIds.has(payment.shootingId),
+      )
+      .reduce((total, payment) => total + payment.amount, 0);
+
+    return Math.max(
+      0,
+      acceptedShootingTotals - receivedForEligibleShootings,
+    );
+  }
+
+  get monthlyIncomeChartData(): MonthlyIncome[] {
+    const now = new Date();
+
+    const months: {
+      label: string;
+      year: number;
+      month: number;
+      amount: number;
+    }[] = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(
+        now.getFullYear(),
+        now.getMonth() - i,
+        1,
+      );
+
+      months.push({
+        label: date.toLocaleDateString('it-IT', {
+          month: 'short',
+        }),
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        amount: 0,
+      });
+    }
+
+    this.payments
+      .filter((payment) => payment.status === 'RECEIVED')
+      .forEach((payment) => {
+        const date = new Date(payment.paymentDate);
+
+        const month = months.find(
+          (item) =>
+            item.month === date.getMonth() &&
+            item.year === date.getFullYear(),
+        );
+
+        if (month) {
+          month.amount += payment.amount;
+        }
+      });
+
+    const maxAmount = Math.max(
+      ...months.map((month) => month.amount),
+      1,
+    );
+
+    return months.map((month) => ({
+      label: month.label,
+      amount: month.amount,
+      percentage: (month.amount / maxAmount) * 100,
+    }));
+  }
+
+  // GRAFICO SHOOTING
+
   get monthlyChartData(): MonthlyShooting[] {
     const now = new Date();
 
@@ -196,6 +324,8 @@ export class DashboardComponent implements OnInit {
       percentage: (month.count / maxCount) * 100,
     }));
   }
+
+  // FORMATTAZIONE
 
   formatDate(dateTime: string): string {
     return new Date(dateTime).toLocaleDateString('it-IT', {

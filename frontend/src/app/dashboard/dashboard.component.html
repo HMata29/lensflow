@@ -53,6 +53,47 @@
     </article>
   </section>
 
+
+  <!-- Riepilogo finanziario -->
+  <section class="finance-stats-grid">
+    <article class="panel finance-stat-card">
+      <div class="finance-stat-icon received">↙</div>
+      <div class="finance-stat-content">
+        <span>Totale incassato</span>
+        <strong>{{ loading ? '—' : formatCurrency(totalReceived) }}</strong>
+        <small>Pagamenti effettivamente ricevuti</small>
+      </div>
+    </article>
+
+    <article class="panel finance-stat-card">
+      <div class="finance-stat-icon pending">◷</div>
+      <div class="finance-stat-content">
+        <span>In attesa</span>
+        <strong>{{ loading ? '—' : formatCurrency(totalPending) }}</strong>
+        <small>Pagamenti ancora da ricevere</small>
+      </div>
+    </article>
+
+    <article class="panel finance-stat-card">
+      <div class="finance-stat-icon outstanding">◈</div>
+      <div class="finance-stat-content">
+        <span>Residuo da incassare</span>
+        <strong>{{ loading ? '—' : formatCurrency(totalOutstanding) }}</strong>
+        <small>Preventivi accettati non ancora saldati</small>
+      </div>
+    </article>
+
+    <article class="panel finance-stat-card">
+      <div class="finance-stat-icon refunded">↗</div>
+      <div class="finance-stat-content">
+        <span>Totale rimborsato</span>
+        <strong>{{ loading ? '—' : formatCurrency(totalRefunded) }}</strong>
+        <small>Pagamenti rimborsati</small>
+      </div>
+    </article>
+  </section>
+
+
   <!-- Riepilogo economico -->
   <section class="financial-grid">
     <article class="panel financial-panel">
@@ -170,6 +211,49 @@
       }
     </article>
   </section>
+
+
+  <!-- Andamento finanziario -->
+  <section class="panel income-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="section-icon">€</span>
+        <h3>Andamento degli incassi</h3>
+      </div>
+      <span class="period-label">Ultimi 6 mesi</span>
+    </div>
+
+    @if (loading) {
+      <div class="dashboard-empty">Caricamento incassi...</div>
+    } @else {
+      <div class="income-chart">
+        @for (month of monthlyIncomeChartData; track month.label + $index) {
+          <div class="income-column">
+            <span class="income-value">
+              {{ formatCurrency(month.amount) }}
+            </span>
+
+            <div class="income-bar-wrapper">
+              <div
+                class="income-bar"
+                [style.height.%]="month.percentage"
+                [class.current-month]="$index === 5"
+              ></div>
+            </div>
+
+            <span class="income-label">{{ month.label }}</span>
+          </div>
+        }
+      </div>
+
+      @if (totalReceived === 0) {
+        <p class="income-empty-note">
+          Non ci sono ancora incassi registrati.
+        </p>
+      }
+    }
+  </section>
+
 
   <!-- Riepilogo attività -->
   <section class="panel overview-panel">
