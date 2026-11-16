@@ -2,6 +2,7 @@
 package com.lensflow.api.shooting.entity;
 
 import com.lensflow.api.client.entity.Client;
+import com.lensflow.api.quote.entity.Quote;
 
 import jakarta.persistence.*;
 
@@ -40,6 +41,10 @@ public class Shooting {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_id", unique = true)
+    private Quote quote;
 
     public Shooting() {
     }
@@ -110,5 +115,13 @@ public class Shooting {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public Quote getQuote() {
+    return quote;
+    }
+
+    public void setQuote(Quote quote) {
+        this.quote = quote;
     }
 }

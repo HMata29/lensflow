@@ -14,9 +14,14 @@ export interface Shooting {
   location: string;
   status: ShootingStatus;
   notes: string;
+
   clientId: number;
   clientFirstName: string;
   clientLastName: string;
+
+  // Preventivo associato
+  quoteId?: number | null;
+  quoteTotalAmount?: number | null;
 }
 
 export interface ShootingRequest {
@@ -28,4 +33,7 @@ export interface ShootingRequest {
   status: ShootingStatus;
   notes: string;
   clientId: number;
+
+  // Preventivo da associare allo shooting
+  quoteId?: number | null;
 }

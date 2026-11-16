@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ShootingsComponent } from './shootings/shootings.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { QuotesComponent } from './quotes/quotes.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 import { ClientService } from './services/client.service';
 import { Client, ClientRequest } from './models/client.model';
@@ -19,6 +20,7 @@ import { Client, ClientRequest } from './models/client.model';
     ShootingsComponent,
     DashboardComponent,
     QuotesComponent,
+    PaymentsComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -201,6 +203,7 @@ export class App {
     { label: 'Shooting', icon: '◎' },
     { label: 'Clienti', icon: '♙' },
     { label: 'Preventivi', icon: '▤' },
+    { label: 'Pagamenti', icon: '€' },
     { label: 'Gallerie', icon: '▧' },
     { label: 'Statistiche', icon: '▥' },
   ];

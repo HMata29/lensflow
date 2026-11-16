@@ -2,9 +2,9 @@
 package com.lensflow.api.shooting.dto;
 
 import com.lensflow.api.shooting.entity.ShootingStatus;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -35,6 +35,9 @@ public class ShootingRequest {
 
     @NotNull(message = "Il cliente è obbligatorio")
     private Long clientId;
+
+    @Positive(message = "L'ID del preventivo deve essere positivo")
+    private Long quoteId;
 
     public ShootingRequest() {
     }
@@ -101,5 +104,13 @@ public class ShootingRequest {
 
     public void setClientId(Long clientId) {
         this.clientId = clientId;
+    }
+
+    public Long getQuoteId() {
+        return quoteId;
+    }
+
+    public void setQuoteId(Long quoteId) {
+        this.quoteId = quoteId;
     }
 }

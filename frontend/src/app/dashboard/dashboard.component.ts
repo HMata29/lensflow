@@ -1,7 +1,12 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectorRef,
+} from '@angular/core';
+import { forkJoin, finalize } from 'rxjs';
 
 import { ClientService } from '../services/client.service';
 import { ShootingService } from '../services/shooting.service';
@@ -28,6 +33,7 @@ export class DashboardComponent implements OnInit {
   private readonly clientService = inject(ClientService);
   private readonly shootingService = inject(ShootingService);
   private readonly quoteService = inject(QuoteService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   clients: Client[] = [];
   shootings: Shooting[] = [];
@@ -44,23 +50,36 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
+    this.cdr.detectChanges();
+
     forkJoin({
       clients: this.clientService.getAll(),
       shootings: this.shootingService.getAll(),
       quotes: this.quoteService.getAll(),
-    }).subscribe({
-      next: ({ clients, shootings, quotes }) => {
-        this.clients = clients;
-        this.shootings = shootings;
-        this.quotes = quotes;
-        this.loading = false;
-      },
-      error: () => {
-        this.errorMessage =
-          'Impossibile caricare i dati della Dashboard. Riprova più tardi.';
-        this.loading = false;
-      },
-    });
+    })
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: ({ clients, shootings, quotes }) => {
+          this.clients = clients;
+          this.shootings = shootings;
+          this.quotes = quotes;
+
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('DASHBOARD LOAD ERROR:', error);
+
+          this.errorMessage =
+            'Impossibile caricare i dati della Dashboard. Riprova più tardi.';
+
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   get totalClients(): number {
@@ -99,17 +118,22 @@ export class DashboardComponent implements OnInit {
       )
       .sort(
         (a, b) =>
-          new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+          new Date(a.startAt).getTime() -
+          new Date(b.startAt).getTime(),
       )
       .slice(0, 5);
   }
 
   get pendingQuotes(): number {
-    return this.quotes.filter((quote) => quote.status === 'SENT').length;
+    return this.quotes.filter(
+      (quote) => quote.status === 'SENT',
+    ).length;
   }
 
   get acceptedQuotes(): number {
-    return this.quotes.filter((quote) => quote.status === 'ACCEPTED').length;
+    return this.quotes.filter(
+      (quote) => quote.status === 'ACCEPTED',
+    ).length;
   }
 
   get acceptedQuotesTotal(): number {
@@ -120,14 +144,25 @@ export class DashboardComponent implements OnInit {
 
   get monthlyChartData(): MonthlyShooting[] {
     const now = new Date();
-    const months: { label: string; year: number; month: number; count: number }[] =
-      [];
+
+    const months: {
+      label: string;
+      year: number;
+      month: number;
+      count: number;
+    }[] = [];
 
     for (let i = 5; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const date = new Date(
+        now.getFullYear(),
+        now.getMonth() - i,
+        1,
+      );
 
       months.push({
-        label: date.toLocaleDateString('it-IT', { month: 'short' }),
+        label: date.toLocaleDateString('it-IT', {
+          month: 'short',
+        }),
         year: date.getFullYear(),
         month: date.getMonth(),
         count: 0,
@@ -138,9 +173,11 @@ export class DashboardComponent implements OnInit {
       .filter((shooting) => shooting.status !== 'CANCELLED')
       .forEach((shooting) => {
         const date = new Date(shooting.startAt);
+
         const month = months.find(
           (item) =>
-            item.month === date.getMonth() && item.year === date.getFullYear(),
+            item.month === date.getMonth() &&
+            item.year === date.getFullYear(),
         );
 
         if (month) {
@@ -148,7 +185,10 @@ export class DashboardComponent implements OnInit {
         }
       });
 
-    const maxCount = Math.max(...months.map((month) => month.count), 1);
+    const maxCount = Math.max(
+      ...months.map((month) => month.count),
+      1,
+    );
 
     return months.map((month) => ({
       label: month.label,
