@@ -2,6 +2,7 @@
 package com.lensflow.api.auth.controller;
 
 import com.lensflow.api.auth.service.RegistrationService;
+import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -73,63 +74,64 @@ public class AuthController {
                 ));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @Valid @RequestBody LoginRequest request,
-            HttpServletRequest httpRequest
-    ) {
+    
+        @PostMapping("/login")
+        public ResponseEntity<?> login(
+                @Valid @RequestBody LoginRequest request,
+                HttpServletRequest httpRequest,
+                HttpServletResponse httpResponse
+        ) {
         try {
-            Authentication authentication =
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    request.email().trim()
-                                            .toLowerCase(Locale.ROOT),
-                                    request.password()
-                            )
-                    );
+                Authentication authentication =
+                        authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(
+                                        request.email().trim()
+                                                .toLowerCase(Locale.ROOT),
+                                        request.password()
+                                )
+                        );
 
-            // Crea la sessione prima di applicare la protezione
-            // contro la session fixation.
-            httpRequest.getSession(true);
+                httpRequest.getSession(true);
 
-            sessionStrategy.onAuthentication(
-                    authentication,
-                    httpRequest,
-                    null
-            );
+                sessionStrategy.onAuthentication(
+                        authentication,
+                        httpRequest,
+                        httpResponse
+                );
 
-            SecurityContext context =
-                    SecurityContextHolder.createEmptyContext();
+                SecurityContext context =
+                        SecurityContextHolder.createEmptyContext();
 
-            context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
 
-            securityContextRepository.saveContext(
-                    context,
-                    httpRequest,
-                    null
-            );
+                securityContextRepository.saveContext(
+                        context,
+                        httpRequest,
+                        httpResponse
+                );
 
-            return ResponseEntity.ok(
-                    new AuthResponse(
-                            authentication.getName(),
-                            authentication.getAuthorities()
-                                    .stream()
-                                    .map(authority ->
-                                            authority.getAuthority())
-                                    .toList()
-                    )
-            );
+                return ResponseEntity.ok(
+                        new AuthResponse(
+                                authentication.getName(),
+                                authentication.getAuthorities()
+                                        .stream()
+                                        .map(authority ->
+                                                authority.getAuthority())
+                                        .toList()
+                        )
+                );
 
         } catch (AuthenticationException exception) {
-            SecurityContextHolder.clearContext();
+                SecurityContextHolder.clearContext();
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse(
-                            "Email o password non corrette"
-                    ));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse(
+                                "Email o password non corrette"
+                        ));
         }
-    }
+        }
+
 
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> me(

@@ -1264,4 +1264,27 @@ button {
   }
 }
 
+.auth-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #111311;
+  color: #d9b477;
+  font-size: 14px;
+}
+
+.logout-button {
+  padding: 9px 14px;
+  border: 1px solid #373c34;
+  border-radius: 8px;
+  background: transparent;
+  color: #d4d5ce;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  border-color: #d9b477;
+  color: #d9b477;
+}
+
 

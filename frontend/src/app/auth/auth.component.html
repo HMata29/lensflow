@@ -1,0 +1,152 @@
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="brand-mark">◉</div>
+      <div>
+        <h1>LensFlow</h1>
+        <span>PHOTOGRAPHY MANAGEMENT</span>
+      </div>
+    </div>
+
+    <div class="auth-heading">
+      <span class="eyebrow">IL TUO STUDIO, SOTTO CONTROLLO</span>
+
+      <h2>
+        {{ mode === 'login' ? 'Bentornato.' : 'Crea il tuo studio.' }}
+      </h2>
+
+      <p>
+        {{
+          mode === 'login'
+            ? 'Accedi per gestire la tua attività fotografica.'
+            : 'Registrati e inizia a organizzare il tuo lavoro.'
+        }}
+      </p>
+    </div>
+
+    <div class="auth-tabs">
+      <button
+        type="button"
+        [class.active]="mode === 'login'"
+        (click)="setMode('login')"
+      >
+        Accedi
+      </button>
+
+      <button
+        type="button"
+        [class.active]="mode === 'register'"
+        (click)="setMode('register')"
+      >
+        Registrati
+      </button>
+    </div>
+
+    @if (errorMessage) {
+      <div class="auth-message error">
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="auth-message success">
+        {{ successMessage }}
+      </div>
+    }
+
+    <form (ngSubmit)="submit()" #authForm="ngForm">
+      @if (mode === 'register') {
+        <div class="form-row">
+          <label>
+            Nome
+            <input
+              type="text"
+              name="firstName"
+              [(ngModel)]="firstName"
+              required
+              maxlength="100"
+              autocomplete="given-name"
+            />
+          </label>
+
+          <label>
+            Cognome
+            <input
+              type="text"
+              name="lastName"
+              [(ngModel)]="lastName"
+              required
+              maxlength="100"
+              autocomplete="family-name"
+            />
+          </label>
+        </div>
+
+        <label>
+          Nome dello studio
+          <input
+            type="text"
+            name="studioName"
+            [(ngModel)]="studioName"
+            maxlength="150"
+            autocomplete="organization"
+            placeholder="Es. LensFlow Studio"
+          />
+        </label>
+      }
+
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          email
+          maxlength="190"
+          autocomplete="email"
+        />
+      </label>
+
+      <label>
+        Password
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          [minlength]="mode === 'register' ? 12 : 1"
+          [maxlength]="72"
+          [autocomplete]="
+            mode === 'login' ? 'current-password' : 'new-password'
+          "
+        />
+      </label>
+
+      @if (mode === 'register') {
+        <p class="password-hint">
+          La password deve contenere almeno 12 caratteri.
+        </p>
+      }
+
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="authForm.invalid || loading"
+      >
+        {{
+          loading
+            ? 'Attendere...'
+            : mode === 'login'
+              ? 'Accedi a LensFlow'
+              : 'Crea account'
+        }}
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      LensFlow · Photography Management
+    </p>
+  </div>
+</div>

@@ -1,3 +1,12 @@
+@if (!authChecked) {
+  <div class="auth-loading">
+    Caricamento LensFlow...
+  </div>
+} @else if (!isAuthenticated) {
+  <app-auth
+    (authenticated)="handleAuthenticated($event)"
+  ></app-auth>
+} @else {
 
 <div class="app-shell">
   <aside class="sidebar">
@@ -74,6 +83,13 @@
 
         <span class="profile-chevron">⌄</span>
       </div>
+            <button
+        type="button"
+        class="logout-button"
+        (click)="logout()"
+      >
+        Esci
+      </button>
       </div>
     </header>
 
@@ -482,9 +498,10 @@
 
 
 
-    <footer class="footer">
+        <footer class="footer">
       <span>© 2026 LensFlow</span>
       <span>Made for photographers <span class="footer-star">✦</span></span>
     </footer>
   </main>
 </div>
+}

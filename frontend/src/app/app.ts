@@ -1,3 +1,9 @@
+import { OnInit } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
+import { AuthComponent } from './auth/auth.component';
+import { AuthService, AuthResponse } from './services/auth.service';
 import { CalendarComponent } from './calendar/calendar.component';
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -35,13 +41,61 @@ interface PhotographerSettings {
     QuotesComponent,
     PaymentsComponent,
     GalleriesComponent,
+    AuthComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 
 
-export class App {
+export class App implements OnInit {
+private readonly authService = inject(AuthService);
+private readonly platformId = inject(PLATFORM_ID);
+
+authChecked = false;
+isAuthenticated = false;
+
+ngOnInit(): void {
+  if (!isPlatformBrowser(this.platformId)) {
+    return;
+  }
+
+  this.authService.restoreSession().subscribe({
+    next: () => {
+      this.isAuthenticated = true;
+      this.authChecked = true;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.authService.clearSession();
+      this.isAuthenticated = false;
+      this.authChecked = true;
+      this.cdr.detectChanges();
+    },
+  });
+}
+
+handleAuthenticated(user: AuthResponse): void {
+  this.isAuthenticated = true;
+  this.authChecked = true;
+  this.cdr.detectChanges();
+}
+
+logout(): void {
+  this.authService.logout().subscribe({
+    next: () => {
+      this.isAuthenticated = false;
+      this.activePage = 'Dashboard';
+      this.clients = [];
+      this.clientError = '';
+      this.clientSuccess = '';
+    },
+    error: () => {
+      this.clientError =
+        'Impossibile completare il logout. Riprova.';
+    },
+  });
+}
 
   // IMPOSTAZIONI PROFILO
 
