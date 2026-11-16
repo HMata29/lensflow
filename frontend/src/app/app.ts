@@ -3,6 +3,7 @@ import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ShootingsComponent } from './shootings/shootings.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { ClientService } from './services/client.service';
 import { Client, ClientRequest } from './models/client.model';
@@ -10,7 +11,13 @@ import { Client, ClientRequest } from './models/client.model';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, CalendarComponent, ShootingsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CalendarComponent,
+    ShootingsComponent,
+    DashboardComponent,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

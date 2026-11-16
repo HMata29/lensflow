@@ -1,0 +1,155 @@
+
+<section class="dashboard-page">
+  @if (errorMessage) {
+    <div class="dashboard-alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <section class="stats-grid">
+    <article class="stat-card">
+      <div class="stat-icon gold">▦</div>
+      <div class="stat-content">
+        <span class="stat-label">Shooting del mese</span>
+        <strong class="stat-value">
+          {{ loading ? '—' : monthlyShootings }}
+        </strong>
+        <span class="stat-detail gold">Servizi programmati</span>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon green">♙</div>
+      <div class="stat-content">
+        <span class="stat-label">Clienti totali</span>
+        <strong class="stat-value">
+          {{ loading ? '—' : totalClients }}
+        </strong>
+        <span class="stat-detail green">Clienti registrati</span>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon blue">✓</div>
+      <div class="stat-content">
+        <span class="stat-label">Shooting completati</span>
+        <strong class="stat-value">
+          {{ loading ? '—' : completedShootings }}
+        </strong>
+        <span class="stat-detail blue">Servizi conclusi</span>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon purple">◷</div>
+      <div class="stat-content">
+        <span class="stat-label">Prossimi appuntamenti</span>
+        <strong class="stat-value">
+          {{ loading ? '—' : upcomingShootings.length }}
+        </strong>
+        <span class="stat-detail purple">Da svolgere</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel upcoming-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="section-icon">▦</span>
+          <h3>Prossimi shooting</h3>
+        </div>
+
+        <span class="period-label">Agenda</span>
+      </div>
+
+      @if (loading) {
+        <div class="dashboard-empty">
+          Caricamento appuntamenti...
+        </div>
+      } @else if (upcomingShootings.length === 0) {
+        <div class="dashboard-empty">
+          <div class="empty-icon">◷</div>
+          <h4>Nessun appuntamento imminente</h4>
+          <p>Quando pianificherai uno shooting, lo troverai qui.</p>
+        </div>
+      } @else {
+        <div class="shoot-list">
+          @for (shoot of upcomingShootings; track shoot.id) {
+            <div class="shoot-item">
+              <div class="date-box">
+                <span>{{ formatDate(shoot.startAt) }}</span>
+                <strong>{{ formatTime(shoot.startAt) }}</strong>
+              </div>
+
+              <div class="shoot-info">
+                <strong>{{ shoot.title }}</strong>
+
+                <span class="shoot-client">
+                  {{ shoot.clientFirstName }} {{ shoot.clientLastName }}
+                </span>
+
+                @if (shoot.location) {
+                  <span class="shoot-location">
+                    ⌖ {{ shoot.location }}
+                  </span>
+                }
+
+                <span class="shoot-time">
+                  Fine: {{ formatTime(shoot.endAt) }}
+                </span>
+              </div>
+
+              <span class="status" [class]="shoot.status.toLowerCase()">
+                {{ getStatusLabel(shoot.status) }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </article>
+
+    <article class="panel overview-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="section-icon">◈</span>
+          <h3>Riepilogo attività</h3>
+        </div>
+      </div>
+
+      <div class="overview-content">
+        <div class="overview-row">
+          <div>
+            <span class="overview-label">Clienti registrati</span>
+            <span class="overview-description">Nel tuo archivio</span>
+          </div>
+          <strong>{{ loading ? '—' : totalClients }}</strong>
+        </div>
+
+        <div class="overview-row">
+          <div>
+            <span class="overview-label">Shooting questo mese</span>
+            <span class="overview-description">Esclusi quelli annullati</span>
+          </div>
+          <strong>{{ loading ? '—' : monthlyShootings }}</strong>
+        </div>
+
+        <div class="overview-row">
+          <div>
+            <span class="overview-label">Servizi completati</span>
+            <span class="overview-description">Storico complessivo</span>
+          </div>
+          <strong>{{ loading ? '—' : completedShootings }}</strong>
+        </div>
+
+        <div class="overview-row">
+          <div>
+            <span class="overview-label">Prossimi appuntamenti</span>
+            <span class="overview-description">Non ancora conclusi</span>
+          </div>
+          <strong>{{ loading ? '—' : upcomingShootings.length }}</strong>
+        </div>
+      </div>
+    </article>
+  </section>
+</section>
