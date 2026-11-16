@@ -1,13 +1,183 @@
 
-import { Component } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { ClientService } from './services/client.service';
+import { Client, ClientRequest } from './models/client.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
+
+
+  private readonly clientService = inject(ClientService);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  clients: Client[] = [];
+  loadingClients = false;
+  savingClient = false;
+  clientError = '';
+  clientSuccess = '';
+
+  showClientForm = false;
+  editingClientId: number | null = null;
+
+  clientForm: ClientRequest = this.emptyClientForm();
+
+  private emptyClientForm(): ClientRequest {
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      company: '',
+      notes: '',
+    };
+  }
+
+  loadClients(): void {
+    this.loadingClients = true;
+    this.clientError = '';
+
+    this.clientService.getAll().subscribe({
+      next: (clients) => {
+        this.clients = clients;
+        this.loadingClients = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.clientError =
+          'Impossibile caricare i clienti. Verifica che il backend sia avviato.';
+        this.loadingClients = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  openCreateClientForm(): void {
+    this.editingClientId = null;
+    this.clientForm = this.emptyClientForm();
+    this.clientError = '';
+    this.clientSuccess = '';
+    this.showClientForm = true;
+  }
+
+  openEditClientForm(client: Client): void {
+    this.editingClientId = client.id;
+
+    this.clientForm = {
+      firstName: client.firstName,
+      lastName: client.lastName,
+      email: client.email ?? '',
+      phone: client.phone ?? '',
+      company: client.company ?? '',
+      notes: client.notes ?? '',
+    };
+
+    this.clientError = '';
+    this.clientSuccess = '';
+    this.showClientForm = true;
+  }
+
+  cancelClientForm(): void {
+    this.showClientForm = false;
+    this.editingClientId = null;
+    this.clientForm = this.emptyClientForm();
+  }
+
+  saveClient(): void {
+    if (this.savingClient) {
+      return;
+    }
+
+    this.savingClient = true;
+    this.clientError = '';
+    this.clientSuccess = '';
+
+    const request: ClientRequest = {
+      firstName: this.clientForm.firstName.trim(),
+      lastName: this.clientForm.lastName.trim(),
+      email: this.clientForm.email.trim(),
+      phone: this.clientForm.phone.trim(),
+      company: this.clientForm.company.trim(),
+      notes: this.clientForm.notes.trim(),
+    };
+
+    const operation =
+      this.editingClientId === null
+        ? this.clientService.create(request)
+        : this.clientService.update(this.editingClientId, request);
+
+    operation.subscribe({
+      next: (response) => {
+        console.log('SAVE NEXT ESEGUITO:', response);
+
+        const wasEditing = this.editingClientId !== null;
+
+        this.savingClient = false;
+        this.showClientForm = false;
+        this.editingClientId = null;
+        this.clientForm = this.emptyClientForm();
+
+        this.clientSuccess = wasEditing
+          ? 'Cliente aggiornato correttamente.'
+          : 'Cliente salvato correttamente.';
+
+        this.loadClients();
+
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.savingClient = false;
+        console.error('SAVE ERROR:', error);
+
+        if (error.status === 400 && error.error) {
+          const messages = Object.values(error.error) as string[];
+          this.clientError = messages.join(' ');
+        } else {
+          this.clientError =
+            'Errore durante il salvataggio del cliente.';
+        }
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  deleteClient(client: Client): void {
+    const confirmed = window.confirm(
+      `Vuoi eliminare il cliente ${client.firstName} ${client.lastName}?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.clientError = '';
+    this.clientSuccess = '';
+
+    this.clientService.delete(client.id).subscribe({
+      next: () => {
+        this.clients = this.clients.filter(
+          (item) => item.id !== client.id,
+        );
+
+        this.clientSuccess = 'Cliente eliminato correttamente.';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.clientError =
+          'Errore durante l’eliminazione del cliente.';
+          this.cdr.detectChanges();
+      },
+    });
+  }
+
   activePage = 'Dashboard';
 
   readonly navigation = [
@@ -112,6 +282,10 @@ export class App {
   ];
 
   selectPage(page: string): void {
-    this.activePage = page;
+  this.activePage = page;
+
+  if (page === 'Clienti') {
+    this.loadClients();
   }
+}
 }

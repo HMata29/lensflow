@@ -251,6 +251,218 @@
           </div>
         </article>
       </section>
+    
+    } @else if (activePage === 'Clienti') {
+      <section class="clients-page">
+        <div class="clients-toolbar">
+          <div>
+            <h3>Gestione clienti</h3>
+            <p>Organizza e gestisci i contatti del tuo studio.</p>
+          </div>
+
+          <button
+            class="primary-button"
+            (click)="openCreateClientForm()"
+          >
+            + Nuovo cliente
+          </button>
+        </div>
+
+        @if (clientSuccess) {
+          <div class="client-alert success">
+            {{ clientSuccess }}
+          </div>
+        }
+
+        @if (clientError) {
+          <div class="client-alert error">
+            {{ clientError }}
+          </div>
+        }
+
+        @if (showClientForm) {
+          <article class="panel client-form-panel">
+            <div class="panel-header">
+              <h3>
+                {{ editingClientId === null ? 'Nuovo cliente' : 'Modifica cliente' }}
+              </h3>
+              <button
+                class="text-button"
+                type="button"
+                (click)="cancelClientForm()"
+              >
+                Annulla
+              </button>
+            </div>
+
+            <form
+              class="client-form"
+              #clientFormRef="ngForm"
+              (ngSubmit)="saveClient()"
+            >
+              <div class="form-grid">
+                <label>
+                  Nome *
+                  <input
+                    type="text"
+                    name="firstName"
+                    [(ngModel)]="clientForm.firstName"
+                    required
+                    maxlength="100"
+                  />
+                </label>
+
+                <label>
+                  Cognome *
+                  <input
+                    type="text"
+                    name="lastName"
+                    [(ngModel)]="clientForm.lastName"
+                    required
+                    maxlength="100"
+                  />
+                </label>
+
+                <label>
+                  Email
+                  <input
+                    type="email"
+                    name="email"
+                    [(ngModel)]="clientForm.email"
+                    maxlength="150"
+                  />
+                </label>
+
+                <label>
+                  Telefono
+                  <input
+                    type="tel"
+                    name="phone"
+                    [(ngModel)]="clientForm.phone"
+                    maxlength="30"
+                  />
+                </label>
+
+                <label class="full-width">
+                  Azienda
+                  <input
+                    type="text"
+                    name="company"
+                    [(ngModel)]="clientForm.company"
+                    maxlength="150"
+                  />
+                </label>
+
+                <label class="full-width">
+                  Note
+                  <textarea
+                    name="notes"
+                    [(ngModel)]="clientForm.notes"
+                    rows="4"
+                  ></textarea>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button
+                  type="button"
+                  class="secondary-button"
+                  (click)="cancelClientForm()"
+                >
+                  Annulla
+                </button>
+
+                <button
+                  type="submit"
+                  class="primary-button"
+                  [disabled]="clientFormRef.invalid || savingClient"
+                >
+                  {{ savingClient ? 'Salvataggio...' : 'Salva cliente' }}
+                </button>
+              </div>
+            </form>
+          </article>
+        }
+
+        <article class="panel clients-table-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span class="section-icon">♙</span>
+              <h3>Clienti registrati</h3>
+            </div>
+
+            <span class="period-label">
+              {{ clients.length }} clienti
+            </span>
+          </div>
+
+          @if (loadingClients) {
+            <div class="clients-empty">
+              Caricamento clienti...
+            </div>
+          } @else if (clients.length === 0) {
+            <div class="clients-empty">
+              <div class="placeholder-icon">♙</div>
+              <h3>Nessun cliente presente</h3>
+              <p>Aggiungi il tuo primo cliente per iniziare.</p>
+              <button
+                class="primary-button"
+                (click)="openCreateClientForm()"
+              >
+                Crea primo cliente
+              </button>
+            </div>
+          } @else {
+            <div class="clients-table-wrapper">
+              <table class="clients-table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Email</th>
+                    <th>Telefono</th>
+                    <th>Azienda</th>
+                    <th>Azioni</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (client of clients; track client.id) {
+                    <tr>
+                      <td>
+                        <strong>
+                          {{ client.firstName }} {{ client.lastName }}
+                        </strong>
+                      </td>
+                      <td>{{ client.email || '—' }}</td>
+                      <td>{{ client.phone || '—' }}</td>
+                      <td>{{ client.company || '—' }}</td>
+                      <td>
+                        <div class="client-actions">
+                          <button
+                            class="table-action edit"
+                            type="button"
+                            (click)="openEditClientForm(client)"
+                          >
+                            Modifica
+                          </button>
+
+                          <button
+                            class="table-action delete"
+                            type="button"
+                            (click)="deleteClient(client)"
+                          >
+                            Elimina
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </article>
+      </section>
     } @else {
       <section class="panel placeholder-panel">
         <div class="placeholder-icon">◈</div>
@@ -261,6 +473,7 @@
         </button>
       </section>
     }
+
 
     <footer class="footer">
       <span>© 2026 LensFlow</span>
