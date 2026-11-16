@@ -4,15 +4,7 @@ package com.lensflow.api.auth.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "photographer_profiles",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uk_photographer_profiles_user",
-            columnNames = "user_id"
-        )
-    }
-)
+@Table(name = "photographer_profiles")
 public class PhotographerProfile {
 
     @Id
