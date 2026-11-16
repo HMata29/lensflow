@@ -144,6 +144,58 @@ export class DashboardComponent implements OnInit {
     ).length;
   }
 
+
+  // STATISTICHE GALLERIE
+
+  get galleryShootings(): Shooting[] {
+    return this.shootings.filter(
+      (shooting) => shooting.status !== 'CANCELLED',
+    );
+  }
+
+  get galleriesNotStarted(): number {
+    return this.galleryShootings.filter(
+      (shooting) => shooting.galleryStatus === 'NOT_STARTED',
+    ).length;
+  }
+
+  get galleriesInProgress(): number {
+    return this.galleryShootings.filter(
+      (shooting) => shooting.galleryStatus === 'IN_PROGRESS',
+    ).length;
+  }
+
+  get galleriesToSelect(): number {
+    return this.galleryShootings.filter(
+      (shooting) => shooting.galleryStatus === 'TO_SELECT',
+    ).length;
+  }
+
+  get galleriesDelivered(): number {
+    return this.galleryShootings.filter(
+      (shooting) =>
+        shooting.galleryStatus === 'DELIVERED' ||
+        shooting.galleryStatus === 'ARCHIVED',
+    ).length;
+  }
+
+  get archivedGalleries(): number {
+    return this.galleryShootings.filter(
+      (shooting) => shooting.galleryStatus === 'ARCHIVED',
+    ).length;
+  }
+
+  get galleryProgressPercentage(): number {
+    const total = this.galleryShootings.length;
+
+    if (total === 0) {
+      return 0;
+    }
+
+    return Math.round((this.galleriesDelivered / total) * 100);
+  }
+
+
   get acceptedQuotes(): number {
     return this.quotes.filter(
       (quote) => quote.status === 'ACCEPTED',

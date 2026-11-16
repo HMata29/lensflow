@@ -3,6 +3,7 @@ package com.lensflow.api.shooting.entity;
 
 import com.lensflow.api.client.entity.Client;
 import com.lensflow.api.quote.entity.Quote;
+import com.lensflow.api.shooting.entity.GalleryStatus;
 
 import jakarta.persistence.*;
 
@@ -45,6 +46,10 @@ public class Shooting {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id", unique = true)
     private Quote quote;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gallery_status", nullable = false, length = 30)
+    private GalleryStatus galleryStatus = GalleryStatus.NOT_STARTED;
 
     public Shooting() {
     }
@@ -123,5 +128,13 @@ public class Shooting {
 
     public void setQuote(Quote quote) {
         this.quote = quote;
+    }
+
+    public GalleryStatus getGalleryStatus() {
+        return galleryStatus;
+    }
+
+    public void setGalleryStatus(GalleryStatus galleryStatus) {
+        this.galleryStatus = galleryStatus;
     }
 }

@@ -6,6 +6,7 @@ import { ShootingsComponent } from './shootings/shootings.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { QuotesComponent } from './quotes/quotes.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { GalleriesComponent } from './galleries/galleries.component';
 
 import { ClientService } from './services/client.service';
 import { Client, ClientRequest } from './models/client.model';
@@ -21,6 +22,7 @@ import { Client, ClientRequest } from './models/client.model';
     DashboardComponent,
     QuotesComponent,
     PaymentsComponent,
+    GalleriesComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

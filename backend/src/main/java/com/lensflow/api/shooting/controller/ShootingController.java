@@ -4,6 +4,8 @@ package com.lensflow.api.shooting.controller;
 import com.lensflow.api.shooting.dto.ShootingRequest;
 import com.lensflow.api.shooting.dto.ShootingResponse;
 import com.lensflow.api.shooting.service.ShootingService;
+import com.lensflow.api.shooting.dto.GalleryStatusRequest;
+import jakarta.validation.Valid;
 
 import jakarta.validation.Valid;
 
@@ -67,4 +69,14 @@ public class ShootingController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/gallery-status")
+        public ResponseEntity<ShootingResponse> updateGalleryStatus(
+                @PathVariable Long id,
+                @Valid @RequestBody GalleryStatusRequest request
+        ) {
+        return ResponseEntity.ok(
+                shootingService.updateGalleryStatus(id, request)
+        );
+        }
 }

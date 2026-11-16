@@ -22,6 +22,8 @@ export interface Shooting {
   // Preventivo associato
   quoteId?: number | null;
   quoteTotalAmount?: number | null;
+
+  galleryStatus: GalleryStatus;
 }
 
 export interface ShootingRequest {
@@ -37,3 +39,10 @@ export interface ShootingRequest {
   // Preventivo da associare allo shooting
   quoteId?: number | null;
 }
+
+export type GalleryStatus =
+  | 'NOT_STARTED'
+  | 'IN_PROGRESS'
+  | 'TO_SELECT'
+  | 'DELIVERED'
+  | 'ARCHIVED';

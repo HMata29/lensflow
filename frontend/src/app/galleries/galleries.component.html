@@ -1,0 +1,128 @@
+
+<section class="galleries-page">
+
+  <div class="galleries-toolbar">
+    <div>
+      <h3>Stato delle gallerie</h3>
+      <p>Monitora la post-produzione e la consegna dei tuoi servizi fotografici.</p>
+    </div>
+  </div>
+
+  @if (successMessage) {
+    <div class="gallery-alert success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="gallery-alert error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="gallery-stats">
+    @for (status of statuses; track status.value) {
+      <article class="gallery-stat-card">
+        <span>{{ status.label }}</span>
+        <strong>{{ getCount(status.value) }}</strong>
+      </article>
+    }
+  </div>
+
+  <article class="panel galleries-panel">
+
+    <div class="panel-header">
+      <div>
+        <h3>Monitoraggio consegne</h3>
+        <p>Modifica lo stato direttamente dalla tabella.</p>
+      </div>
+
+      <span class="period-label">
+        {{ filteredShootings.length }} servizi
+      </span>
+    </div>
+
+    <div class="gallery-filters">
+      <input
+        type="search"
+        placeholder="Cerca servizio o cliente..."
+        [(ngModel)]="searchTerm"
+      />
+
+      <select [(ngModel)]="selectedFilter">
+        <option value="ALL">Tutti gli stati</option>
+
+        @for (status of statuses; track status.value) {
+          <option [ngValue]="status.value">
+            {{ status.label }}
+          </option>
+        }
+      </select>
+    </div>
+
+    @if (loading) {
+      <div class="galleries-empty">
+        Caricamento gallerie...
+      </div>
+    } @else if (filteredShootings.length === 0) {
+      <div class="galleries-empty">
+        <div class="placeholder-icon">▧</div>
+        <h3>Nessun servizio trovato</h3>
+        <p>Non ci sono shooting che corrispondono alla ricerca.</p>
+      </div>
+    } @else {
+      <div class="galleries-table-wrapper">
+        <table class="galleries-table">
+          <thead>
+            <tr>
+              <th>Servizio</th>
+              <th>Cliente</th>
+              <th>Data shooting</th>
+              <th>Stato galleria</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (shooting of filteredShootings; track shooting.id) {
+              <tr>
+                <td>
+                  <div class="gallery-service">
+                    <strong>{{ shooting.title }}</strong>
+                    <span>{{ shooting.category }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  {{ shooting.clientFirstName }}
+                  {{ shooting.clientLastName }}
+                </td>
+
+                <td>{{ formatDate(shooting.startAt) }}</td>
+
+                <td>
+                  <select
+                    class="gallery-status-select"
+                    [class]="shooting.galleryStatus.toLowerCase()"
+                    [ngModel]="shooting.galleryStatus"
+                    [disabled]="updatingIds.has(shooting.id)"
+                    (ngModelChange)="updateGalleryStatus(shooting, $event)"
+                  >
+                    @for (status of statuses; track status.value) {
+                      <option [ngValue]="status.value">
+                        {{ status.label }}
+                      </option>
+                    }
+                  </select>
+
+                  @if (updatingIds.has(shooting.id)) {
+                    <span class="saving-label">Salvataggio...</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </article>
+</section>

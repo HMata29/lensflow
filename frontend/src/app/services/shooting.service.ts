@@ -3,7 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Shooting, ShootingRequest } from '../models/shooting.model';
+import {
+  Shooting,
+  ShootingRequest,
+  GalleryStatus,
+} from '../models/shooting.model';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +30,16 @@ export class ShootingService {
 
   update(id: number, request: ShootingRequest): Observable<Shooting> {
     return this.http.put<Shooting>(`${this.apiUrl}/${id}`, request);
+  }
+
+  updateGalleryStatus(
+    id: number,
+    galleryStatus: GalleryStatus,
+  ): Observable<Shooting> {
+    return this.http.patch<Shooting>(
+      `${this.apiUrl}/${id}/gallery-status`,
+      { galleryStatus },
+    );
   }
 
   delete(id: number): Observable<void> {

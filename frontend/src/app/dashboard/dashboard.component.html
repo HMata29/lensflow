@@ -94,6 +94,95 @@
   </section>
 
 
+  <!-- RIEPILOGO GALLERIE -->
+  <section class="panel galleries-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="section-icon">▧</span>
+        <h3>Stato delle Gallerie</h3>
+      </div>
+      <span class="period-label">Post-produzione</span>
+    </div>
+
+    @if (loading) {
+      <div class="dashboard-empty">
+        Caricamento stato gallerie...
+      </div>
+    } @else {
+      <div class="gallery-stats-grid">
+        <article class="gallery-stat-card">
+          <div class="gallery-stat-icon not-started">◷</div>
+          <div class="gallery-stat-content">
+            <span>Da preparare</span>
+            <strong>{{ galleriesNotStarted }}</strong>
+            <small>In attesa di lavorazione</small>
+          </div>
+        </article>
+
+        <article class="gallery-stat-card">
+          <div class="gallery-stat-icon in-progress">✎</div>
+          <div class="gallery-stat-content">
+            <span>In lavorazione</span>
+            <strong>{{ galleriesInProgress }}</strong>
+            <small>Post-produzione in corso</small>
+          </div>
+        </article>
+
+        <article class="gallery-stat-card">
+          <div class="gallery-stat-icon to-select">◈</div>
+          <div class="gallery-stat-content">
+            <span>Da selezionare</span>
+            <strong>{{ galleriesToSelect }}</strong>
+            <small>In attesa di selezione</small>
+          </div>
+        </article>
+
+        <article class="gallery-stat-card">
+          <div class="gallery-stat-icon delivered">✓</div>
+          <div class="gallery-stat-content">
+            <span>Consegnate</span>
+            <strong>{{ galleriesDelivered }}</strong>
+            <small>
+              {{ archivedGalleries }} archiviate incluse
+            </small>
+          </div>
+        </article>
+      </div>
+
+      <div class="gallery-progress">
+        <div class="gallery-progress-header">
+          <div>
+            <strong>Avanzamento consegne</strong>
+            <span>
+              {{ galleriesDelivered }} su {{ galleryShootings.length }}
+              shooting completati
+            </span>
+          </div>
+
+          <strong class="gallery-progress-value">
+            {{ galleryProgressPercentage }}%
+          </strong>
+        </div>
+
+        <div
+          class="gallery-progress-track"
+          role="progressbar"
+          [attr.aria-valuenow]="galleryProgressPercentage"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-label="Percentuale di gallerie consegnate"
+        >
+          <div
+            class="gallery-progress-fill"
+            [style.width.%]="galleryProgressPercentage"
+          ></div>
+        </div>
+      </div>
+    }
+  </section>
+
+
+
   <!-- Riepilogo economico -->
   <section class="financial-grid">
     <article class="panel financial-panel">

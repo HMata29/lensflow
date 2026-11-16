@@ -2,6 +2,7 @@
 package com.lensflow.api.shooting.dto;
 
 import com.lensflow.api.shooting.entity.ShootingStatus;
+import com.lensflow.api.shooting.entity.GalleryStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class ShootingResponse {
     private final Long quoteId;
     private final String quoteNumber;
     private final BigDecimal quoteTotalAmount;
+    private final GalleryStatus galleryStatus;
 
     public ShootingResponse(
             Long id,
@@ -37,7 +39,8 @@ public class ShootingResponse {
             String clientLastName,
             Long quoteId,
             String quoteNumber,
-            BigDecimal quoteTotalAmount
+            BigDecimal quoteTotalAmount,
+            GalleryStatus galleryStatus
     ) {
         this.id = id;
         this.title = title;
@@ -53,6 +56,7 @@ public class ShootingResponse {
         this.quoteId = quoteId;
         this.quoteNumber = quoteNumber;
         this.quoteTotalAmount = quoteTotalAmount;
+        this.galleryStatus = galleryStatus;
     }
 
     public Long getId() {
@@ -109,5 +113,9 @@ public class ShootingResponse {
 
     public BigDecimal getQuoteTotalAmount() {
         return quoteTotalAmount;
+    }
+
+    public GalleryStatus getGalleryStatus() {
+        return galleryStatus;
     }
 }

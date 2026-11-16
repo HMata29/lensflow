@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import com.lensflow.api.shooting.entity.GalleryStatus;
+import com.lensflow.api.shooting.dto.GalleryStatusRequest;
 
 import java.util.List;
 
@@ -195,7 +197,21 @@ public class ShootingService {
                 client.getLastName(),
                 quote != null ? quote.getId() : null,
                 quote != null ? quote.getQuoteNumber() : null,
-                quote != null ? quote.getTotalAmount() : null
+                quote != null ? quote.getTotalAmount() : null,
+                shooting.getGalleryStatus()
         );
     }
+
+    public ShootingResponse updateGalleryStatus(
+                Long id,
+                GalleryStatusRequest request
+        ) {
+        Shooting shooting = findShootingById(id);
+
+        shooting.setGalleryStatus(request.getGalleryStatus());
+
+        Shooting updatedShooting = shootingRepository.saveAndFlush(shooting);
+
+        return mapToResponse(updatedShooting);
+        }
 }
