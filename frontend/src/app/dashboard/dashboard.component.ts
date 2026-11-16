@@ -1,11 +1,21 @@
 
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { forkJoin } from 'rxjs';
 
 import { ClientService } from '../services/client.service';
 import { ShootingService } from '../services/shooting.service';
+import { QuoteService } from '../services/quote.service';
+
 import { Client } from '../models/client.model';
 import { Shooting } from '../models/shooting.model';
+import { Quote } from '../models/quote.model';
+
+interface MonthlyShooting {
+  label: string;
+  count: number;
+  percentage: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -17,10 +27,11 @@ import { Shooting } from '../models/shooting.model';
 export class DashboardComponent implements OnInit {
   private readonly clientService = inject(ClientService);
   private readonly shootingService = inject(ShootingService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly quoteService = inject(QuoteService);
 
   clients: Client[] = [];
   shootings: Shooting[] = [];
+  quotes: Quote[] = [];
 
   loading = true;
   errorMessage = '';
@@ -33,28 +44,21 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.clientService.getAll().subscribe({
-      next: (clients) => {
+    forkJoin({
+      clients: this.clientService.getAll(),
+      shootings: this.shootingService.getAll(),
+      quotes: this.quoteService.getAll(),
+    }).subscribe({
+      next: ({ clients, shootings, quotes }) => {
         this.clients = clients;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorMessage = 'Impossibile caricare i clienti.';
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-    });
-
-    this.shootingService.getAll().subscribe({
-      next: (shootings) => {
         this.shootings = shootings;
+        this.quotes = quotes;
         this.loading = false;
-        this.cdr.detectChanges();
       },
       error: () => {
-        this.errorMessage = 'Impossibile caricare gli shooting.';
+        this.errorMessage =
+          'Impossibile caricare i dati della Dashboard. Riprova più tardi.';
         this.loading = false;
-        this.cdr.detectChanges();
       },
     });
   }
@@ -100,6 +104,59 @@ export class DashboardComponent implements OnInit {
       .slice(0, 5);
   }
 
+  get pendingQuotes(): number {
+    return this.quotes.filter((quote) => quote.status === 'SENT').length;
+  }
+
+  get acceptedQuotes(): number {
+    return this.quotes.filter((quote) => quote.status === 'ACCEPTED').length;
+  }
+
+  get acceptedQuotesTotal(): number {
+    return this.quotes
+      .filter((quote) => quote.status === 'ACCEPTED')
+      .reduce((total, quote) => total + quote.totalAmount, 0);
+  }
+
+  get monthlyChartData(): MonthlyShooting[] {
+    const now = new Date();
+    const months: { label: string; year: number; month: number; count: number }[] =
+      [];
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+
+      months.push({
+        label: date.toLocaleDateString('it-IT', { month: 'short' }),
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        count: 0,
+      });
+    }
+
+    this.shootings
+      .filter((shooting) => shooting.status !== 'CANCELLED')
+      .forEach((shooting) => {
+        const date = new Date(shooting.startAt);
+        const month = months.find(
+          (item) =>
+            item.month === date.getMonth() && item.year === date.getFullYear(),
+        );
+
+        if (month) {
+          month.count++;
+        }
+      });
+
+    const maxCount = Math.max(...months.map((month) => month.count), 1);
+
+    return months.map((month) => ({
+      label: month.label,
+      count: month.count,
+      percentage: (month.count / maxCount) * 100,
+    }));
+  }
+
   formatDate(dateTime: string): string {
     return new Date(dateTime).toLocaleDateString('it-IT', {
       weekday: 'short',
@@ -112,6 +169,13 @@ export class DashboardComponent implements OnInit {
     return new Date(dateTime).toLocaleTimeString('it-IT', {
       hour: '2-digit',
       minute: '2-digit',
+    });
+  }
+
+  formatCurrency(amount: number): string {
+    return amount.toLocaleString('it-IT', {
+      style: 'currency',
+      currency: 'EUR',
     });
   }
 

@@ -6,6 +6,7 @@
     </div>
   }
 
+  <!-- Statistiche principali -->
   <section class="stats-grid">
     <article class="stat-card">
       <div class="stat-icon gold">▦</div>
@@ -43,23 +44,83 @@
     <article class="stat-card">
       <div class="stat-icon purple">◷</div>
       <div class="stat-content">
-        <span class="stat-label">Prossimi appuntamenti</span>
+        <span class="stat-label">Preventivi in attesa</span>
         <strong class="stat-value">
-          {{ loading ? '—' : upcomingShootings.length }}
+          {{ loading ? '—' : pendingQuotes }}
         </strong>
-        <span class="stat-detail purple">Da svolgere</span>
+        <span class="stat-detail purple">Preventivi inviati</span>
       </div>
     </article>
   </section>
 
+  <!-- Riepilogo economico -->
+  <section class="financial-grid">
+    <article class="panel financial-panel">
+      <div class="financial-icon">€</div>
+      <div class="financial-content">
+        <span class="financial-label">Valore preventivi accettati</span>
+        <strong class="financial-value">
+          {{ loading ? '—' : formatCurrency(acceptedQuotesTotal) }}
+        </strong>
+        <span class="financial-detail">
+          {{ loading ? '—' : acceptedQuotes }}
+          {{ acceptedQuotes === 1 ? 'preventivo accettato' : 'preventivi accettati' }}
+        </span>
+      </div>
+    </article>
+
+    <article class="panel financial-panel">
+      <div class="financial-icon purple-icon">◷</div>
+      <div class="financial-content">
+        <span class="financial-label">Prossimi appuntamenti</span>
+        <strong class="financial-value">
+          {{ loading ? '—' : upcomingShootings.length }}
+        </strong>
+        <span class="financial-detail">Shooting da svolgere</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- Grafico e agenda -->
   <section class="dashboard-grid">
+    <article class="panel chart-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="section-icon">▥</span>
+          <h3>Andamento shooting</h3>
+        </div>
+        <span class="period-label">Ultimi 6 mesi</span>
+      </div>
+
+      @if (loading) {
+        <div class="dashboard-empty">Caricamento grafico...</div>
+      } @else {
+        <div class="chart-content">
+          <div class="chart-bars">
+            @for (month of monthlyChartData; track month.label + $index) {
+              <div class="chart-column">
+                <span class="chart-count">{{ month.count }}</span>
+                <div class="chart-bar-wrapper">
+                  <div
+                    class="chart-bar"
+                    [style.height.%]="month.percentage"
+                    [class.current-month]="$index === 5"
+                  ></div>
+                </div>
+                <span class="chart-label">{{ month.label }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </article>
+
     <article class="panel upcoming-panel">
       <div class="panel-header">
         <div class="panel-title">
           <span class="section-icon">▦</span>
           <h3>Prossimi shooting</h3>
         </div>
-
         <span class="period-label">Agenda</span>
       </div>
 
@@ -108,48 +169,59 @@
         </div>
       }
     </article>
+  </section>
 
-    <article class="panel overview-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <span class="section-icon">◈</span>
-          <h3>Riepilogo attività</h3>
+  <!-- Riepilogo attività -->
+  <section class="panel overview-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="section-icon">◈</span>
+        <h3>Riepilogo attività</h3>
+      </div>
+    </div>
+
+    <div class="overview-content">
+      <div class="overview-row">
+        <div>
+          <span class="overview-label">Clienti registrati</span>
+          <span class="overview-description">Nel tuo archivio</span>
         </div>
+        <strong>{{ loading ? '—' : totalClients }}</strong>
       </div>
 
-      <div class="overview-content">
-        <div class="overview-row">
-          <div>
-            <span class="overview-label">Clienti registrati</span>
-            <span class="overview-description">Nel tuo archivio</span>
-          </div>
-          <strong>{{ loading ? '—' : totalClients }}</strong>
+      <div class="overview-row">
+        <div>
+          <span class="overview-label">Shooting questo mese</span>
+          <span class="overview-description">Esclusi quelli annullati</span>
         </div>
-
-        <div class="overview-row">
-          <div>
-            <span class="overview-label">Shooting questo mese</span>
-            <span class="overview-description">Esclusi quelli annullati</span>
-          </div>
-          <strong>{{ loading ? '—' : monthlyShootings }}</strong>
-        </div>
-
-        <div class="overview-row">
-          <div>
-            <span class="overview-label">Servizi completati</span>
-            <span class="overview-description">Storico complessivo</span>
-          </div>
-          <strong>{{ loading ? '—' : completedShootings }}</strong>
-        </div>
-
-        <div class="overview-row">
-          <div>
-            <span class="overview-label">Prossimi appuntamenti</span>
-            <span class="overview-description">Non ancora conclusi</span>
-          </div>
-          <strong>{{ loading ? '—' : upcomingShootings.length }}</strong>
-        </div>
+        <strong>{{ loading ? '—' : monthlyShootings }}</strong>
       </div>
-    </article>
+
+      <div class="overview-row">
+        <div>
+          <span class="overview-label">Servizi completati</span>
+          <span class="overview-description">Storico complessivo</span>
+        </div>
+        <strong>{{ loading ? '—' : completedShootings }}</strong>
+      </div>
+
+      <div class="overview-row">
+        <div>
+          <span class="overview-label">Preventivi in attesa</span>
+          <span class="overview-description">Inviati ai clienti</span>
+        </div>
+        <strong>{{ loading ? '—' : pendingQuotes }}</strong>
+      </div>
+
+      <div class="overview-row">
+        <div>
+          <span class="overview-label">Preventivi accettati</span>
+          <span class="overview-description">Valore complessivo</span>
+        </div>
+        <strong class="overview-money">
+          {{ loading ? '—' : formatCurrency(acceptedQuotesTotal) }}
+        </strong>
+      </div>
+    </div>
   </section>
 </section>
