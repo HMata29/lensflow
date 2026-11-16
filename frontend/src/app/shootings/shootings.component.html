@@ -1,0 +1,358 @@
+
+<section class="shootings-page">
+  <div class="shootings-toolbar">
+    <div>
+      <h3>Gestione shooting</h3>
+      <p>Organizza i servizi fotografici e i tuoi appuntamenti.</p>
+    </div>
+
+    <button
+      class="primary-button"
+      type="button"
+      (click)="openCreateForm()"
+      [disabled]="clients.length === 0"
+    >
+      + Nuovo shooting
+    </button>
+  </div>
+
+  @if (successMessage) {
+    <div class="shooting-alert success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="shooting-alert error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (clients.length === 0 && !loadingShootings) {
+    <div class="shooting-alert warning">
+      Non ci sono clienti registrati. Crea prima un cliente nella sezione Clienti.
+    </div>
+  }
+
+  @if (showForm) {
+    <article class="panel shooting-form-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span class="section-icon">◎</span>
+          <h3>
+            {{ editingShootingId === null ? 'Nuovo shooting' : 'Modifica shooting' }}
+          </h3>
+        </div>
+
+        <button class="text-button" type="button" (click)="cancelForm()">
+          Annulla
+        </button>
+      </div>
+
+      <form
+        class="shooting-form"
+        #shootingFormRef="ngForm"
+        (ngSubmit)="saveShooting()"
+      >
+        <div class="form-grid">
+          <label>
+            Titolo *
+            <input
+              type="text"
+              name="title"
+              [(ngModel)]="shootingForm.title"
+              required
+              maxlength="150"
+              placeholder="Es. Matrimonio Sara e Luca"
+            />
+          </label>
+
+          <label>
+            Cliente *
+            <select
+              name="clientId"
+              [(ngModel)]="shootingForm.clientId"
+              required
+            >
+              <option [ngValue]="0" disabled>Seleziona un cliente</option>
+
+              @for (client of clients; track client.id) {
+                <option [ngValue]="client.id">
+                  {{ client.firstName }} {{ client.lastName }}
+                  @if (client.company) {
+                    — {{ client.company }}
+                  }
+                </option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Categoria *
+            <select
+              name="category"
+              [(ngModel)]="shootingForm.category"
+              required
+            >
+              <option value="" disabled>Seleziona una categoria</option>
+
+              @for (category of categories; track category) {
+                <option [value]="category">
+                  {{ category }}
+                </option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Stato *
+            <select
+              name="status"
+              [(ngModel)]="shootingForm.status"
+              required
+            >
+              @for (status of statuses; track status.value) {
+                <option [ngValue]="status.value">
+                  {{ status.label }}
+                </option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <div class="datetime-section">
+          <div class="datetime-heading">
+            <span class="datetime-icon">◷</span>
+            <div>
+              <h4>Programmazione</h4>
+              <p>Definisci data e orario del servizio.</p>
+            </div>
+          </div>
+
+          <div class="datetime-grid">
+            <div class="datetime-card">
+              <div class="datetime-card-heading">
+                <span class="datetime-indicator start"></span>
+                <strong>Inizio shooting</strong>
+              </div>
+
+              <div class="datetime-fields">
+                <label>
+                  Data
+                  <input
+                    type="date"
+                    name="startDate"
+                    [(ngModel)]="startDate"
+                    required
+                  />
+                </label>
+
+                <label>
+                  Orario
+                  <select
+                    name="startTime"
+                    [(ngModel)]="startTime"
+                    required
+                  >
+                    <option value="" disabled>Seleziona orario</option>
+
+                    @for (time of timeOptions; track time) {
+                      <option [value]="time">
+                        {{ time }}
+                      </option>
+                    }
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div class="datetime-card">
+              <div class="datetime-card-heading">
+                <span class="datetime-indicator end"></span>
+                <strong>Fine shooting</strong>
+              </div>
+
+              <div class="datetime-fields">
+                <label>
+                  Data
+                  <input
+                    type="date"
+                    name="endDate"
+                    [(ngModel)]="endDate"
+                    required
+                  />
+                </label>
+
+                <label>
+                  Orario
+                  <select
+                    name="endTime"
+                    [(ngModel)]="endTime"
+                    required
+                  >
+                    <option value="" disabled>Seleziona orario</option>
+
+                    @for (time of timeOptions; track time) {
+                      <option [value]="time">
+                        {{ time }}
+                      </option>
+                    }
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="full-width">
+            Luogo
+            <input
+              type="text"
+              name="location"
+              [(ngModel)]="shootingForm.location"
+              maxlength="255"
+              placeholder="Es. Villa, studio, indirizzo..."
+            />
+          </label>
+
+          <label class="full-width">
+            Note
+            <textarea
+              name="notes"
+              [(ngModel)]="shootingForm.notes"
+              rows="4"
+              placeholder="Aggiungi dettagli sul servizio fotografico..."
+            ></textarea>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button
+            class="secondary-button"
+            type="button"
+            (click)="cancelForm()"
+          >
+            Annulla
+          </button>
+
+          <button
+            class="primary-button"
+            type="submit"
+            [disabled]="shootingFormRef.invalid || savingShooting"
+          >
+            {{ savingShooting ? 'Salvataggio...' : 'Salva shooting' }}
+          </button>
+        </div>
+      </form>
+    </article>
+  }
+
+  <article class="panel shootings-table-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span class="section-icon">▦</span>
+        <h3>Shooting registrati</h3>
+      </div>
+
+      <span class="period-label">
+        {{ shootings.length }} shooting
+      </span>
+    </div>
+
+    @if (loadingShootings) {
+      <div class="shootings-empty">
+        Caricamento shooting...
+      </div>
+    } @else if (shootings.length === 0) {
+      <div class="shootings-empty">
+        <div class="placeholder-icon">◎</div>
+        <h3>Nessuno shooting presente</h3>
+        <p>Crea il tuo primo servizio fotografico per iniziare.</p>
+
+        @if (clients.length > 0) {
+          <button
+            class="primary-button"
+            type="button"
+            (click)="openCreateForm()"
+          >
+            Crea primo shooting
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="shootings-table-wrapper">
+        <table class="shootings-table">
+          <thead>
+            <tr>
+              <th>Servizio</th>
+              <th>Cliente</th>
+              <th>Data</th>
+              <th>Orario</th>
+              <th>Luogo</th>
+              <th>Stato</th>
+              <th>Azioni</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (shooting of shootings; track shooting.id) {
+              <tr>
+                <td>
+                  <div class="shooting-name">
+                    <strong>{{ shooting.title }}</strong>
+                    <span>{{ shooting.category }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  {{ shooting.clientFirstName }}
+                  {{ shooting.clientLastName }}
+                </td>
+
+                <td>{{ formatDate(shooting.startAt) }}</td>
+
+                <td>
+                  {{ formatTime(shooting.startAt) }}
+                  –
+                  {{ formatTime(shooting.endAt) }}
+                </td>
+
+                <td>{{ shooting.location || '—' }}</td>
+
+                <td>
+                  <span
+                    class="shooting-status"
+                    [class]="shooting.status.toLowerCase()"
+                  >
+                    {{ getStatusLabel(shooting.status) }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="shooting-actions">
+                    <button
+                      class="table-action edit"
+                      type="button"
+                      (click)="openEditForm(shooting)"
+                    >
+                      Modifica
+                    </button>
+
+                    <button
+                      class="table-action delete"
+                      type="button"
+                      (click)="deleteShooting(shooting)"
+                    >
+                      Elimina
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </article>
+</section>

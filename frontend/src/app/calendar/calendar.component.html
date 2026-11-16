@@ -1,0 +1,146 @@
+
+<section class="calendar-page">
+  <div class="calendar-toolbar">
+    <div>
+      <h3>Calendario shooting</h3>
+      <p>Visualizza e organizza i tuoi servizi fotografici.</p>
+    </div>
+
+    <button class="today-button" type="button" (click)="goToToday()">
+      Oggi
+    </button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="calendar-alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="calendar-layout">
+    <article class="panel calendar-main">
+      <div class="month-navigation">
+        <button
+          class="month-arrow"
+          type="button"
+          aria-label="Mese precedente"
+          (click)="previousMonth()"
+        >
+          ‹
+        </button>
+
+        <h3>{{ monthLabel }}</h3>
+
+        <button
+          class="month-arrow"
+          type="button"
+          aria-label="Mese successivo"
+          (click)="nextMonth()"
+        >
+          ›
+        </button>
+      </div>
+
+      <div class="calendar-grid">
+        @for (weekday of weekdays; track weekday) {
+          <div class="weekday">{{ weekday }}</div>
+        }
+
+        @for (day of calendarDays; track day.date.toISOString()) {
+          <button
+            class="calendar-day"
+            type="button"
+            [class.other-month]="!day.isCurrentMonth"
+            [class.today]="day.isToday"
+            [class.selected]="isSelectedDate(day.date)"
+            [class.today-selected]="day.isToday && isSelectedDate(day.date)"
+            [class.has-shootings]="day.shootings.length > 0"
+            (click)="selectDate(day.date)"
+          >
+            <span class="day-number">{{ day.dayNumber }}</span>
+
+            @if (day.shootings.length > 0) {
+              <span class="shooting-dots">
+                @for (shoot of day.shootings.slice(0, 3); track shoot.id) {
+                  <span class="shooting-dot"></span>
+                }
+              </span>
+            }
+          </button>
+        }
+      </div>
+
+      <div class="calendar-legend">
+        <span>
+          <span class="legend-dot"></span>
+          Shooting programmato
+        </span>
+
+        <span>
+          <span class="legend-today"></span>
+          Oggi
+        </span>
+
+        <span>
+          <span class="legend-selected"></span>
+          Giorno selezionato
+        </span>
+      </div>
+    </article>
+
+    <article class="panel selected-day-panel">
+      <div class="selected-day-header">
+        <span class="eyebrow">AGENDA GIORNALIERA</span>
+
+        <h3>{{ selectedDateLabel }}</h3>
+
+        <p>
+          {{ selectedDateShootings.length }}
+          {{ selectedDateShootings.length === 1 ? 'shooting' : 'shooting' }}
+          in programma
+        </p>
+      </div>
+
+      @if (loading) {
+        <div class="agenda-empty">
+          Caricamento shooting...
+        </div>
+      } @else if (selectedDateShootings.length === 0) {
+        <div class="agenda-empty">
+          <div class="empty-icon">◷</div>
+          <h4>Nessuno shooting</h4>
+          <p>Non hai servizi fotografici programmati per questa giornata.</p>
+        </div>
+      } @else {
+        <div class="agenda-list">
+          @for (shoot of selectedDateShootings; track shoot.id) {
+            <div class="agenda-item">
+              <div class="agenda-time">
+                <strong>{{ formatTime(shoot.startAt) }}</strong>
+                <span>{{ formatTime(shoot.endAt) }}</span>
+              </div>
+
+              <div class="agenda-details">
+                <strong>{{ shoot.title }}</strong>
+
+                <span class="agenda-client">
+                  {{ shoot.clientFirstName }} {{ shoot.clientLastName }}
+                </span>
+
+                @if (shoot.location) {
+                  <span class="agenda-location">
+                    ⌖ {{ shoot.location }}
+                  </span>
+                }
+
+                <span class="agenda-status" [class]="shoot.status.toLowerCase()">
+                  {{ getStatusLabel(shoot.status) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </article>
+  </div>
+</section>

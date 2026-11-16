@@ -1,0 +1,561 @@
+
+:host {
+  display: block;
+  color: #f1eee8;
+}
+
+.shootings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.shootings-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: #92918e;
+    font-size: 13px;
+  }
+}
+
+.panel {
+  min-width: 0;
+  border: 1px solid #292a2c;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #191a1c, #141517);
+}
+
+.shooting-form-panel,
+.shootings-table-panel {
+  padding: 20px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #292a2c;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+.section-icon {
+  color: #d9b477;
+  font-size: 21px;
+}
+
+.period-label {
+  color: #888783;
+  font-size: 11px;
+}
+
+.primary-button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #d9b477;
+  color: #171411;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: #f1d4a1;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.secondary-button {
+  padding: 12px 18px;
+  border: 1px solid #353638;
+  border-radius: 8px;
+  color: #d0cdc7;
+  background: #222325;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: #2c2d2f;
+  }
+}
+
+.text-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #d9b477;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.shooting-form {
+  padding-top: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-grid label,
+.datetime-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #c5c2bc;
+  font-size: 12px;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea,
+.datetime-fields input,
+.datetime-fields select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #343538;
+  border-radius: 8px;
+  outline: none;
+  background: #101113;
+  color: #f1eee8;
+  font: inherit;
+  font-size: 13px;
+  color-scheme: dark;
+  transition: border-color 0.2s ease;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus,
+.datetime-fields input:focus,
+.datetime-fields select:focus {
+  border-color: #d9b477;
+}
+
+.form-grid select,
+.datetime-fields select {
+  cursor: pointer;
+}
+
+.form-grid textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Programmazione date e orari */
+
+.datetime-section {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid #2d2e30;
+  border-radius: 12px;
+  background: #131416;
+}
+
+.datetime-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  h4 {
+    margin: 0;
+    color: #e8e6e2;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 5px 0 0;
+    color: #92918e;
+    font-size: 11px;
+  }
+}
+
+.datetime-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #4b3b27;
+  border-radius: 10px;
+  background: #302619;
+  color: #d9b477;
+  font-size: 20px;
+}
+
+.datetime-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.datetime-card {
+  padding: 16px;
+  border: 1px solid #292a2c;
+  border-radius: 10px;
+  background: #191a1c;
+}
+
+.datetime-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 15px;
+
+  strong {
+    color: #d6d3cd;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.datetime-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &.start {
+    background: #d9b477;
+    box-shadow: 0 0 8px rgb(217 180 119 / 30%);
+  }
+
+  &.end {
+    background: #82b8ed;
+    box-shadow: 0 0 8px rgb(130 184 237 / 25%);
+  }
+}
+
+.datetime-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.datetime-fields input[type='date'] {
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.datetime-fields select {
+  min-height: 40px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+/* Tabella */
+
+.shootings-table-wrapper {
+  overflow-x: auto;
+}
+
+.shootings-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.shootings-table th {
+  padding: 15px 12px;
+  color: #92918e;
+  font-weight: 500;
+  white-space: nowrap;
+  border-bottom: 1px solid #292a2c;
+}
+
+.shootings-table td {
+  padding: 16px 12px;
+  color: #c6c4bf;
+  border-bottom: 1px solid #292a2c;
+  white-space: nowrap;
+}
+
+.shootings-table tbody tr:hover {
+  background: #202123;
+}
+
+.shooting-name {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 150px;
+
+  strong {
+    color: #f1eee8;
+    font-size: 12px;
+  }
+
+  span {
+    color: #92918e;
+    font-size: 10px;
+  }
+}
+
+.shooting-status {
+  display: inline-block;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+
+  &.planned {
+    color: #e5bf82;
+    background: #382d1f;
+  }
+
+  &.confirmed {
+    color: #75d6a4;
+    background: #1c3027;
+  }
+
+  &.completed {
+    color: #82b8ed;
+    background: #1d2b3b;
+  }
+
+  &.cancelled {
+    color: #ed9292;
+    background: #382222;
+  }
+}
+
+.shooting-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.table-action {
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.table-action.edit {
+  color: #e3bc80;
+  background: #35291b;
+
+  &:hover {
+    background: #493824;
+  }
+}
+
+.table-action.delete {
+  color: #ed9292;
+  background: #382222;
+
+  &:hover {
+    background: #512d2d;
+  }
+}
+
+/* Stati vuoti e messaggi */
+
+.shootings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 50px 20px;
+  text-align: center;
+  color: #92918e;
+
+  h3 {
+    margin: 8px 0 0;
+    color: #e8e6e2;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+  }
+}
+
+.placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 65px;
+  border-radius: 18px;
+  background: #35291b;
+  color: #d9b477;
+  font-size: 30px;
+}
+
+.shooting-alert {
+  padding: 13px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.shooting-alert.success {
+  color: #75d6a4;
+  background: #1c3027;
+  border: 1px solid #294b38;
+}
+
+.shooting-alert.error {
+  color: #ed9292;
+  background: #382222;
+  border: 1px solid #593333;
+}
+
+.shooting-alert.warning {
+  color: #e5bf82;
+  background: #382d1f;
+  border: 1px solid #5c452c;
+}
+
+/* Responsive */
+
+@media (max-width: 760px) {
+  .shootings-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form-grid,
+  .datetime-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .shooting-form-panel,
+  .shootings-table-panel {
+    padding: 14px;
+  }
+
+  .datetime-section {
+    padding: 14px;
+  }
+
+  .datetime-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+
+/* Fix spaziature e dimensioni dei campi */
+
+.shootings-page *,
+.shootings-page *::before,
+.shootings-page *::after {
+  box-sizing: border-box;
+}
+
+.form-grid {
+  column-gap: 20px;
+  row-gap: 22px;
+}
+
+.form-grid > label {
+  min-width: 0;
+}
+
+.datetime-section {
+  padding: 22px;
+}
+
+.datetime-grid {
+  gap: 18px;
+}
+
+.datetime-card {
+  min-width: 0;
+  padding: 18px;
+}
+
+.datetime-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.datetime-fields label {
+  min-width: 0;
+}
+
+.datetime-fields input,
+.datetime-fields select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+.datetime-card-heading {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 1100px) {
+  .datetime-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .datetime-section {
+    padding: 14px;
+  }
+
+  .datetime-card {
+    padding: 14px;
+  }
+
+  .datetime-fields {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
