@@ -55,8 +55,13 @@ export class App {
 
     this.clientService.getAll().subscribe({
       next: (clients) => {
+        console.log('CLIENTS NEXT:', clients);
+
         this.clients = clients;
         this.loadingClients = false;
+
+        console.log('LOADING CLIENTS:', this.loadingClients);
+
         this.cdr.detectChanges();
       },
       error: () => {
