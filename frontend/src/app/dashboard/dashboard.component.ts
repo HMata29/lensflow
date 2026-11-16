@@ -30,6 +30,17 @@ interface MonthlyIncome {
   percentage: number;
 }
 
+type ActivityType = 'shooting' | 'quote' | 'payment' | 'gallery';
+
+interface RecentActivity {
+  id: string;
+  type: ActivityType;
+  title: string;
+  description: string;
+  date: string;
+  timestamp: number;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -207,6 +218,111 @@ export class DashboardComponent implements OnInit {
       .filter((quote) => quote.status === 'ACCEPTED')
       .reduce((total, quote) => total + quote.totalAmount, 0);
   }
+
+
+
+  // ATTIVITÀ RECENTI
+
+  get recentActivities(): RecentActivity[] {
+    const activities: RecentActivity[] = [];
+
+    const addActivity = (
+      id: string,
+      type: ActivityType,
+      title: string,
+      description: string,
+      date: string | null | undefined,
+    ): void => {
+      if (!date) {
+        return;
+      }
+
+      const timestamp = new Date(date).getTime();
+
+      if (!Number.isFinite(timestamp)) {
+        return;
+      }
+
+      activities.push({
+        id,
+        type,
+        title,
+        description,
+        date,
+        timestamp,
+      });
+    };
+
+    // Nuovi shooting
+    this.shootings.forEach((shooting) => {
+      addActivity(
+        `shooting-${shooting.id}`,
+        'shooting',
+        'Nuovo shooting',
+        shooting.title,
+        shooting.createdAt,
+      );
+    });
+
+    // Preventivi accettati
+    this.quotes.forEach((quote) => {
+      if (quote.status === 'ACCEPTED') {
+        addActivity(
+          `quote-${quote.id}`,
+          'quote',
+          'Preventivo accettato',
+          `${quote.quoteNumber} · ${quote.clientFirstName} ${quote.clientLastName}`,
+          quote.acceptedAt,
+        );
+      }
+    });
+
+    // Pagamenti ricevuti
+    this.payments.forEach((payment) => {
+      if (payment.status === 'RECEIVED') {
+        addActivity(
+          `payment-${payment.id}`,
+          'payment',
+          'Pagamento ricevuto',
+          `${payment.shootingTitle} · ${this.formatCurrency(payment.amount)}`,
+          payment.paymentDate,
+        );
+      }
+    });
+
+    // Gallerie consegnate o archiviate
+    this.shootings.forEach((shooting) => {
+      if (
+        shooting.galleryStatus === 'DELIVERED' ||
+        shooting.galleryStatus === 'ARCHIVED'
+      ) {
+        addActivity(
+          `gallery-${shooting.id}`,
+          'gallery',
+          shooting.galleryStatus === 'ARCHIVED'
+            ? 'Galleria archiviata'
+            : 'Galleria consegnata',
+          shooting.title,
+          shooting.galleryStatusUpdatedAt,
+        );
+      }
+    });
+
+    return activities
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 10);
+  }
+
+  formatActivityDate(date: string): string {
+    return new Date(date).toLocaleString('it-IT', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
 
   // STATISTICHE FINANZIARIE
 

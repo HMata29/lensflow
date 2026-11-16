@@ -189,20 +189,21 @@ public class QuoteService {
                 .toList();
 
         return new QuoteResponse(
-                quote.getId(),
-                quote.getQuoteNumber(),
-                quote.getTitle(),
-                quote.getNotes(),
-                quote.getIssueDate(),
-                quote.getExpiryDate(),
-                quote.getStatus(),
-                client.getId(),
-                client.getFirstName(),
-                client.getLastName(),
-                itemResponses,
-                quote.getTotalAmount(),
-                quote.getCreatedAt(),
-                quote.getUpdatedAt()
-        );
+            quote.getId(),
+            quote.getQuoteNumber(),
+            quote.getTitle(),
+            quote.getNotes(),
+            quote.getIssueDate(),
+            quote.getExpiryDate(),
+            quote.getStatus(),
+            client.getId(),
+            client.getFirstName(),
+            client.getLastName(),
+            itemResponses,
+            quote.getTotalAmount(),
+            quote.getCreatedAt(),
+            quote.getUpdatedAt(),
+            quote.getAcceptedAt()
+    );
     }
 }

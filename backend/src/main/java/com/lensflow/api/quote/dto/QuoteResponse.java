@@ -24,6 +24,7 @@ public class QuoteResponse {
     private final BigDecimal totalAmount;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final LocalDateTime acceptedAt;
 
     public QuoteResponse(
             Long id,
@@ -39,7 +40,9 @@ public class QuoteResponse {
             List<QuoteItemResponse> items,
             BigDecimal totalAmount,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            LocalDateTime updatedAt,
+            LocalDateTime acceptedAt
+            
     ) {
         this.id = id;
         this.quoteNumber = quoteNumber;
@@ -55,6 +58,7 @@ public class QuoteResponse {
         this.totalAmount = totalAmount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.acceptedAt = acceptedAt;
     }
 
     public Long getId() {
@@ -111,5 +115,9 @@ public class QuoteResponse {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public LocalDateTime getAcceptedAt() {
+        return acceptedAt;
     }
 }

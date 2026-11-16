@@ -396,5 +396,64 @@
         </strong>
       </div>
     </div>
+
+  <!-- ATTIVITÀ RECENTI -->
+  <div class="recent-activities">
+    <div class="recent-activities-header">
+      <div>
+        <h4>Attività recenti</h4>
+        <span>Ultimi eventi registrati</span>
+      </div>
+
+      <span class="activity-count">
+        {{ recentActivities.length }} eventi
+      </span>
+    </div>
+
+    @if (loading) {
+      <div class="activity-empty">
+        Caricamento attività...
+      </div>
+    } @else if (recentActivities.length === 0) {
+      <div class="activity-empty">
+        <span class="activity-empty-icon">◷</span>
+        <strong>Nessuna attività recente</strong>
+        <span>
+          Le nuove attività appariranno qui automaticamente.
+        </span>
+      </div>
+    } @else {
+      <div class="activity-list">
+        @for (activity of recentActivities; track activity.id) {
+          <div class="activity-item">
+            <div
+              class="activity-icon"
+              [class.shooting]="activity.type === 'shooting'"
+              [class.quote]="activity.type === 'quote'"
+              [class.payment]="activity.type === 'payment'"
+              [class.gallery]="activity.type === 'gallery'"
+            >
+              @switch (activity.type) {
+                @case ('shooting') { 📸 }
+                @case ('quote') { 📄 }
+                @case ('payment') { € }
+                @case ('gallery') { ▧ }
+              }
+            </div>
+
+            <div class="activity-info">
+              <strong>{{ activity.title }}</strong>
+              <span>{{ activity.description }}</span>
+            </div>
+
+            <time [attr.datetime]="activity.date">
+              {{ formatActivityDate(activity.date) }}
+            </time>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
   </section>
 </section>

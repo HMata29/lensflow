@@ -69,6 +69,9 @@ public class Quote {
         updatedAt = LocalDateTime.now();
     }
 
+    @Column
+    private LocalDateTime acceptedAt;
+
     public Long getId() {
         return id;
     }
@@ -118,6 +121,11 @@ public class Quote {
     }
 
     public void setStatus(QuoteStatus status) {
+        if (status == QuoteStatus.ACCEPTED
+                && this.status != QuoteStatus.ACCEPTED) {
+            this.acceptedAt = LocalDateTime.now();
+        }
+
         this.status = status;
     }
 
@@ -155,5 +163,9 @@ public class Quote {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public LocalDateTime getAcceptedAt() {
+        return acceptedAt;
     }
 }

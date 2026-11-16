@@ -51,6 +51,12 @@ public class Shooting {
     @Column(name = "gallery_status", nullable = false, length = 30)
     private GalleryStatus galleryStatus = GalleryStatus.NOT_STARTED;
 
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime galleryStatusUpdatedAt;
+
     public Shooting() {
     }
 
@@ -135,6 +141,28 @@ public class Shooting {
     }
 
     public void setGalleryStatus(GalleryStatus galleryStatus) {
-        this.galleryStatus = galleryStatus;
+        if (this.galleryStatus != galleryStatus) {
+            this.galleryStatus = galleryStatus;
+            this.galleryStatusUpdatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+
+        createdAt = now;
+
+        if (galleryStatusUpdatedAt == null) {
+            galleryStatusUpdatedAt = now;
+        }
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getGalleryStatusUpdatedAt() {
+        return galleryStatusUpdatedAt;
     }
 }

@@ -24,6 +24,9 @@ export interface Shooting {
   quoteTotalAmount?: number | null;
 
   galleryStatus: GalleryStatus;
+
+  createdAt: string | null;
+  galleryStatusUpdatedAt: string | null;
 }
 
 export interface ShootingRequest {

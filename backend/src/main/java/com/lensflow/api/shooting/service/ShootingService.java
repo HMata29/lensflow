@@ -198,7 +198,9 @@ public class ShootingService {
                 quote != null ? quote.getId() : null,
                 quote != null ? quote.getQuoteNumber() : null,
                 quote != null ? quote.getTotalAmount() : null,
-                shooting.getGalleryStatus()
+                shooting.getGalleryStatus(),
+                shooting.getCreatedAt(),
+                shooting.getGalleryStatusUpdatedAt()
         );
     }
 

@@ -24,6 +24,8 @@ public class ShootingResponse {
     private final String quoteNumber;
     private final BigDecimal quoteTotalAmount;
     private final GalleryStatus galleryStatus;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime galleryStatusUpdatedAt;
 
     public ShootingResponse(
             Long id,
@@ -40,7 +42,9 @@ public class ShootingResponse {
             Long quoteId,
             String quoteNumber,
             BigDecimal quoteTotalAmount,
-            GalleryStatus galleryStatus
+            GalleryStatus galleryStatus,
+            LocalDateTime createdAt,
+            LocalDateTime galleryStatusUpdatedAt
     ) {
         this.id = id;
         this.title = title;
@@ -57,6 +61,8 @@ public class ShootingResponse {
         this.quoteNumber = quoteNumber;
         this.quoteTotalAmount = quoteTotalAmount;
         this.galleryStatus = galleryStatus;
+        this.createdAt = createdAt;
+        this.galleryStatusUpdatedAt = galleryStatusUpdatedAt;
     }
 
     public Long getId() {
@@ -117,5 +123,13 @@ public class ShootingResponse {
 
     public GalleryStatus getGalleryStatus() {
         return galleryStatus;
+    }
+
+    public LocalDateTime getCreatedAt() {
+       return createdAt; 
+    }
+
+    public LocalDateTime getGalleryStatusUpdatedAt() {
+        return galleryStatusUpdatedAt;
     }
 }

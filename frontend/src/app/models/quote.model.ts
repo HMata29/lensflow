@@ -22,6 +22,9 @@ export interface Quote {
   totalAmount: number;
   createdAt: string;
   updatedAt: string;
+  acceptedAt: string | null;
+  clientFirstName: string;
+  clientLastName: string;
 }
 
 export interface QuoteItemRequest {
